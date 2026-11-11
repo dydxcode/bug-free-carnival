@@ -1,3 +1,5 @@
+'use client';
+
 export default function GlobalError({ reset }: { reset: () => void }) {
   return (
     <main className="container-shell py-24 text-center">
