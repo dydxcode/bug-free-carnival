@@ -1,0 +1,20 @@
+[
+  {
+    "id": "embed-movie-midnight-signal",
+    "targetId": "movie-midnight-signal",
+    "targetType": "movie",
+    "provider": "YouTube",
+    "embedUrl": "https://www.youtube.com/embed/ScMzIvxBSi4",
+    "previewUrl": "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+    "externalWatchUrl": "https://example.com/watch/midnight-signal"
+  },
+  {
+    "id": "embed-series-ember-circuit",
+    "targetId": "series-ember-circuit",
+    "targetType": "series",
+    "provider": "YouTube",
+    "embedUrl": "https://www.youtube.com/embed/ysz5S6PUM-U",
+    "previewUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+    "externalWatchUrl": "https://example.com/watch/ember-circuit"
+  }
+]

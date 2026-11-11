@@ -1,0 +1,56 @@
+[
+  {
+    "id": "genre-action",
+    "name": "Action",
+    "slug": "action",
+    "description": "High-intensity stories with speed, conflict, and momentum."
+  },
+  {
+    "id": "genre-adventure",
+    "name": "Adventure",
+    "slug": "adventure",
+    "description": "Travel, discovery, and wonder-filled journeys."
+  },
+  {
+    "id": "genre-animation",
+    "name": "Animation",
+    "slug": "animation",
+    "description": "Stylized worlds and expressive storytelling."
+  },
+  {
+    "id": "genre-comedy",
+    "name": "Comedy",
+    "slug": "comedy",
+    "description": "Light-hearted energy and character-driven humor."
+  },
+  {
+    "id": "genre-drama",
+    "name": "Drama",
+    "slug": "drama",
+    "description": "Emotionally rich stories and character arcs."
+  },
+  {
+    "id": "genre-horror",
+    "name": "Horror",
+    "slug": "horror",
+    "description": "Tension, dread, and atmospheric pacing."
+  },
+  {
+    "id": "genre-thriller",
+    "name": "Thriller",
+    "slug": "thriller",
+    "description": "Suspense, mystery, and pressure-filled stakes."
+  },
+  {
+    "id": "genre-romance",
+    "name": "Romance",
+    "slug": "romance",
+    "description": "Emotional connection and relationship-driven stories."
+  },
+  {
+    "id": "genre-science-fiction",
+    "name": "Science Fiction",
+    "slug": "science-fiction",
+    "description": "Future worlds, ideas, and speculative worlds."
+  }
+]
