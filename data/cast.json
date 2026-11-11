@@ -1,0 +1,51 @@
+[
+  {
+    "id": "cast-lyra-cross",
+    "name": "Lyra Cross",
+    "slug": "lyra-cross",
+    "role": "Lead",
+    "photoUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-milo-hart",
+    "name": "Milo Hart",
+    "slug": "milo-hart",
+    "role": "Lead",
+    "photoUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-zoe-miles",
+    "name": "Zoe Miles",
+    "slug": "zoe-miles",
+    "role": "Supporting",
+    "photoUrl": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-rhett-sloan",
+    "name": "Rhett Sloan",
+    "slug": "rhett-sloan",
+    "role": "Supporting",
+    "photoUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-ava-novak",
+    "name": "Ava Novak",
+    "slug": "ava-novak",
+    "role": "Lead",
+    "photoUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-chris-tate",
+    "name": "Chris Tate",
+    "slug": "chris-tate",
+    "role": "Lead",
+    "photoUrl": "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    "id": "cast-sierra-vale",
+    "name": "Sierra Vale",
+    "slug": "sierra-vale",
+    "role": "Supporting",
+    "photoUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80"
+  }
+]
