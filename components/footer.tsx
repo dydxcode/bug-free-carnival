@@ -26,15 +26,13 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted">Contact</p>
+          <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted">Links & attribution</p>
           <ul className="mt-3 space-y-2 text-sm text-muted">
             <li><Link href="/contact">Contact</Link></li>
-            {siteConfig.mainWebsiteUrl ? (
-              <li><a href={siteConfig.mainWebsiteUrl} target="_blank" rel="noopener noreferrer">Main site</a></li>
-            ) : (
-              <li className="text-muted/70">Main site link not configured</li>
-            )}
+            {siteConfig.mainWebsiteUrl && <li><a href={siteConfig.mainWebsiteUrl} target="_blank" rel="noopener noreferrer">Main site</a></li>}
+            <li><a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie Database (TMDB)</a></li>
           </ul>
+          <p className="mt-3 text-xs leading-5 text-muted">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
         </div>
       </div>
     </footer>

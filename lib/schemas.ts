@@ -17,6 +17,7 @@ export const CastSchema = z.object({
 
 export const MovieSchema = z.object({
   id: z.string(),
+  tmdbId: z.number().int().positive().optional(),
   title: z.string().min(1),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   synopsis: z.string().min(20),
@@ -35,6 +36,7 @@ export const MovieSchema = z.object({
 
 export const SeriesSchema = z.object({
   id: z.string(),
+  tmdbId: z.number().int().positive().optional(),
   title: z.string().min(1),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   synopsis: z.string().min(20),
@@ -42,7 +44,7 @@ export const SeriesSchema = z.object({
   releaseYear: z.number().int().min(1900),
   genres: z.array(z.string().min(1)),
   cast: z.array(z.string().min(1)),
-  seasons: z.number().int().min(1),
+  seasons: z.number().int().min(0),
   seoTitle: z.string().min(1),
   seoDescription: z.string().min(1),
   status: z.enum(['draft', 'published', 'archived']),
