@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { siteConfig } from '@/lib/site-config';
 
 export function Footer() {
   return (
@@ -28,7 +29,11 @@ export function Footer() {
           <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted">Contact</p>
           <ul className="mt-3 space-y-2 text-sm text-muted">
             <li><Link href="/contact">Contact</Link></li>
-            <li><a href="https://example.com" target="_blank" rel="noreferrer">Main site</a></li>
+            {siteConfig.mainWebsiteUrl ? (
+              <li><a href={siteConfig.mainWebsiteUrl} target="_blank" rel="noopener noreferrer">Main site</a></li>
+            ) : (
+              <li className="text-muted/70">Main site link not configured</li>
+            )}
           </ul>
         </div>
       </div>

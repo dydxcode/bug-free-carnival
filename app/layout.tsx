@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
+import { GoogleAnalytics } from '@/components/google-analytics';
+import { siteConfig } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL(siteConfig.siteUrl),
   title: {
     default: 'Bug Free Carnival',
     template: '%s | Bug Free Carnival',
@@ -15,9 +17,7 @@ export const metadata: Metadata = {
     title: 'Bug Free Carnival',
     description: 'Search-friendly movie and series discovery landing page.',
     type: 'website',
-  },
-  alternates: {
-    canonical: '/',
+    url: siteConfig.siteUrl,
   },
 };
 
@@ -30,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Footer />
         </div>
+        <GoogleAnalytics />
       </body>
     </html>
   );
