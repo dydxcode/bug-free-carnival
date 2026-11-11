@@ -1,35 +1,23 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllGenres, getMoviesByGenre, getSeriesByGenre, getAllMovies, getAllSeries } from '@/lib/data';
+import { getAllGenres, getMoviesByGenre, getAllMovies } from '@/lib/data';
 import { MovieCard } from '@/components/movie-card';
-import { SeriesCard } from '@/components/series-card';
 
 export const metadata: Metadata = {
   title: 'Movies',
   description: 'Browse a cinematic library of movie recs, filters, and SEO-friendly title listings.',
 };
 
-export default function MoviesPage({ searchParams }: { searchParams?: Promise<{ genre?: string; sort?: string }> }) {
-  const params = (searchParams ? searchParams : Promise.resolve({})) as Promise<{ genre?: string; sort?: string }>;
-  void params;
-  const genreFilter = (searchParams ? undefined : undefined) as string | undefined;
-  const sort = 'featured';
+type MoviesSearchParams = Promise<{ genre?: string; sort?: string }>;
 
-  const allMovies = getAllMovies();
+export default async function MoviesPage({ searchParams }: { searchParams: MoviesSearchParams }) {
+  const { genre, sort } = await searchParams;
   const genres = getAllGenres();
-
-  let visibleMovies = [...allMovies];
-  const genre = genreFilter;
-
-  if (genre) {
-    visibleMovies = getMoviesByGenre(genre);
-  }
+  let visibleMovies = genre ? getMoviesByGenre(genre) : getAllMovies();
 
   if (sort === 'newest') {
     visibleMovies = [...visibleMovies].sort((a, b) => b.releaseYear - a.releaseYear);
-  }
-
-  if (sort === 'alphabetical') {
+  } else if (sort === 'alphabetical') {
     visibleMovies = [...visibleMovies].sort((a, b) => a.title.localeCompare(b.title));
   }
 
@@ -54,7 +42,7 @@ export default function MoviesPage({ searchParams }: { searchParams?: Promise<{ 
 
       <div className="card-surface mb-8 p-4">
         <form method="GET" action="/movies" className="flex flex-col gap-3 md:flex-row">
-          <select name="genre" defaultValue={genre ?? ''} className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
+          <select name="genre" defaultValue={genre ?? ''} aria-label="Filter movies by genre" className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
             <option value="">All genres</option>
             {genres.map((genreItem) => (
               <option key={genreItem.slug} value={genreItem.slug}>
@@ -62,7 +50,7 @@ export default function MoviesPage({ searchParams }: { searchParams?: Promise<{ 
               </option>
             ))}
           </select>
-          <select name="sort" defaultValue={sort} className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
+          <select name="sort" defaultValue={sort ?? 'featured'} aria-label="Sort movies" className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
             <option value="featured">Featured</option>
             <option value="newest">Newest</option>
             <option value="alphabetical">Alphabetical</option>

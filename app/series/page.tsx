@@ -1,31 +1,23 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllGenres, getAllSeries, getSeriesByGenre } from '@/lib/data';
+import { SeriesCard } from '@/components/series-card';
 
 export const metadata: Metadata = {
   title: 'Series',
   description: 'Explore a curated list of episodic series sorted by genre and discovery value.',
 };
 
-export default function SeriesPage({ searchParams }: { searchParams?: Promise<{ genre?: string; sort?: string }> }) {
-  const params = (searchParams ? searchParams : Promise.resolve({})) as Promise<{ genre?: string; sort?: string }>;
-  void params;
-  const genreFilter = (searchParams ? undefined : undefined) as string | undefined;
-  const sort = 'featured';
+type SeriesSearchParams = Promise<{ genre?: string; sort?: string }>;
 
-  const series = getAllSeries();
+export default async function SeriesPage({ searchParams }: { searchParams: SeriesSearchParams }) {
+  const { genre, sort } = await searchParams;
   const genres = getAllGenres();
-  let visibleSeries = [...series];
-
-  if (genreFilter) {
-    visibleSeries = getSeriesByGenre(genreFilter);
-  }
+  let visibleSeries = genre ? getSeriesByGenre(genre) : getAllSeries();
 
   if (sort === 'newest') {
     visibleSeries = [...visibleSeries].sort((a, b) => b.releaseYear - a.releaseYear);
-  }
-
-  if (sort === 'alphabetical') {
+  } else if (sort === 'alphabetical') {
     visibleSeries = [...visibleSeries].sort((a, b) => a.title.localeCompare(b.title));
   }
 
@@ -40,9 +32,9 @@ export default function SeriesPage({ searchParams }: { searchParams?: Promise<{ 
           <Link href="/series" className="rounded-full border border-border px-4 py-2 text-sm text-white hover:border-primary/60">
             All series
           </Link>
-          {genres.map((genre) => (
-            <Link key={genre.slug} href={`/genre/${genre.slug}`} className="rounded-full border border-border px-4 py-2 text-sm text-white hover:border-primary/60">
-              {genre.name}
+          {genres.map((genreItem) => (
+            <Link key={genreItem.slug} href={`/genre/${genreItem.slug}`} className="rounded-full border border-border px-4 py-2 text-sm text-white hover:border-primary/60">
+              {genreItem.name}
             </Link>
           ))}
         </div>
@@ -50,15 +42,15 @@ export default function SeriesPage({ searchParams }: { searchParams?: Promise<{ 
 
       <div className="card-surface mb-8 p-4">
         <form method="GET" action="/series" className="flex flex-col gap-3 md:flex-row">
-          <select name="genre" defaultValue={genreFilter ?? ''} className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
+          <select name="genre" defaultValue={genre ?? ''} aria-label="Filter series by genre" className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
             <option value="">All genres</option>
-            {genres.map((genre) => (
-              <option key={genre.slug} value={genre.slug}>
-                {genre.name}
+            {genres.map((genreItem) => (
+              <option key={genreItem.slug} value={genreItem.slug}>
+                {genreItem.name}
               </option>
             ))}
           </select>
-          <select name="sort" defaultValue={sort} className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
+          <select name="sort" defaultValue={sort ?? 'featured'} aria-label="Sort series" className="w-full rounded-full border border-border bg-panel px-4 py-3 text-white md:max-w-xs">
             <option value="featured">Featured</option>
             <option value="newest">Newest</option>
             <option value="alphabetical">Alphabetical</option>
