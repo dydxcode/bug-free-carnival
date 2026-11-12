@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "sync:tmdb": "node --env-file-if-exists=.env.local scripts/sync-tmdb.mjs"
+    "sync:tmdb": "node scripts/sync-tmdb.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.473.0",
@@ -29,6 +29,6 @@
     "typescript": "^5.7.2"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=20.9.0"
   }
 }
