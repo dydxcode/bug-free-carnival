@@ -77,7 +77,7 @@ function slugToTitle(slug: string) {
   return slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
 }
 
-async function tmdbFetch<T>(path: string, params: Record<string, string | number> = {}) {
+async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
   if (!token) {
     throw new Error('TMDB_ACCESS_TOKEN is not configured.');
   }
@@ -110,7 +110,6 @@ function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
   if (!year || overview.length < 10) return null;
 
   const runtimeLabel = formatRuntime(item.runtime);
-
   return {
     id: item.id,
     type: 'movie',
@@ -164,7 +163,6 @@ export async function getTmdbTrending(limit = 8) {
     .slice(0, limit)
     .map((item) => mapMovie(item))
     .filter(Boolean) as TmdbCatalogItem[];
-
   const series = (seriesResponse.results ?? [])
     .slice(0, limit)
     .map((item) => mapSeries(item))
