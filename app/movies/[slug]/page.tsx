@@ -1,108 +1,79 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Clock3, Play, Star, Film, ExternalLink } from 'lucide-react';
-import { getMovieBySlug, getRelatedMovies, getReviewsForTarget, getVideoForTarget, getAllGenres, getCastEntries } from '@/lib/data';
-import { VideoPreview } from '@/components/video-preview';
+import { ArrowLeft, Clock3, Film, Star } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { getSafeExternalUrl, siteConfig } from '@/lib/site-config';
+import { getMovieBySlug } from '@/lib/data';
+import { getTmdbMovieById, tmdbIdFromSlug } from '@/lib/tmdb';
 
 export const metadata: Metadata = {
   title: 'Movie details',
 };
 
-export default async function MovieDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+type MoviePageProps = { params: Promise<{ slug: string }> };
+
+export default async function MovieDetailPage({ params }: MoviePageProps) {
   const { slug } = await params;
-  const movie = getMovieBySlug(slug);
+  const localMovie = getMovieBySlug(slug);
 
-  if (!movie) notFound();
+  if (localMovie) {
+    return (
+      <main className="container-shell py-10">
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Movies', href: '/movies' }, { label: localMovie.title }]} />
+        <article className="mt-8 grid gap-8 rounded-[28px] border border-border bg-card p-4 md:grid-cols-[320px_1fr] md:p-8">
+          <img src={localMovie.posterUrl} alt={localMovie.title} className="w-full rounded-2xl border border-border object-cover" />
+          <div>
+            <p className="text-xs uppercase tracking-[0.18em] text-primary">Movie</p>
+            <h1 className="mt-3 text-4xl font-semibold text-white">{localMovie.title}</h1>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm text-muted">
+              <span className="inline-flex items-center gap-2"><Star size={14} className="text-primary" />{localMovie.rating}</span>
+              <span className="inline-flex items-center gap-2"><Film size={14} className="text-primary" />{localMovie.releaseYear}</span>
+              <span className="inline-flex items-center gap-2"><Clock3 size={14} className="text-primary" />{localMovie.duration}</span>
+            </div>
+            <p className="mt-6 whitespace-pre-line text-base leading-7 text-muted">{localMovie.synopsis}</p>
+            <Link href="/movies" className="mt-8 inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 font-medium text-white hover:border-primary/60"><ArrowLeft size={16} /> Back to movies</Link>
+          </div>
+        </article>
+      </main>
+    );
+  }
 
-  const related = getRelatedMovies(movie.slug, 3);
-  const reviews = getReviewsForTarget(movie.id);
-  const video = getVideoForTarget(movie.id, 'movie');
-  const castEntries = getCastEntries(movie.cast);
-  const genreNames = getAllGenres().filter((genre) => movie.genres.includes(genre.slug));
-  const watchUrl = getSafeExternalUrl(movie.watchUrl) ?? getSafeExternalUrl(video?.externalWatchUrl) ?? siteConfig.mainWebsiteUrl;
+  const tmdbId = tmdbIdFromSlug(slug);
+  const movie = tmdbId ? await getTmdbMovieById(tmdbId).catch((error) => {
+    console.error('Unable to load TMDB movie detail:', error);
+    return null;
+  }) : null;
+
+  if (!movie) {
+    return (
+      <main className="container-shell py-16">
+        <div className="card-surface mx-auto max-w-2xl p-8 text-center">
+          <h1 className="text-3xl font-semibold text-white">Movie details are unavailable</h1>
+          <p className="mt-3 text-muted">This title could not be loaded from the local catalog or TMDB. Please try searching for it again.</p>
+          <Link href="/search" className="mt-6 inline-flex rounded-full bg-primary px-5 py-3 font-medium text-white hover:bg-[#9d6af5]">Back to search</Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="container-shell py-10">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Movies', href: '/movies' }, { label: movie.title }]} />
-      <article className="mt-8 rounded-[28px] border border-border bg-card p-4 md:p-8">
-        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
-          <div>
-            <img src={movie.posterUrl} alt={movie.title} className="w-full rounded-2xl border border-border object-cover" />
+      <article className="mt-8 grid gap-8 rounded-[28px] border border-border bg-card p-4 md:grid-cols-[320px_1fr] md:p-8">
+        <img src={movie.posterUrl} alt={movie.title} className="w-full rounded-2xl border border-border object-cover" />
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-primary">Movie · TMDB</p>
+          <h1 className="mt-3 text-4xl font-semibold text-white">{movie.title}</h1>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm text-muted">
+            <span className="inline-flex items-center gap-2"><Star size={14} className="text-primary" />{movie.rating}</span>
+            <span className="inline-flex items-center gap-2"><Film size={14} className="text-primary" />{movie.releaseYear}</span>
+            <span className="inline-flex items-center gap-2"><Clock3 size={14} className="text-primary" />{movie.duration ?? 'Runtime unavailable'}</span>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-primary">Movie</p>
-            <h1 className="mt-3 text-4xl font-semibold text-white">{movie.title}</h1>
-            <div className="mt-4 flex flex-wrap gap-3 text-sm text-muted">
-              <span className="inline-flex items-center gap-2"><Star size={14} className="text-primary" /> {movie.rating}</span>
-              <span className="inline-flex items-center gap-2"><Film size={14} className="text-primary" /> {movie.releaseYear}</span>
-              <span className="inline-flex items-center gap-2"><Clock3 size={14} className="text-primary" /> {movie.duration}</span>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {genreNames.map((genre) => (
-                <Link key={genre.slug} href={`/genre/${genre.slug}`} className="rounded-full border border-border bg-panel px-3 py-1 text-xs text-text">{genre.name}</Link>
-              ))}
-            </div>
-            <p className="mt-6 text-base leading-7 text-muted">{movie.synopsis}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {watchUrl ? (
-                <a href={watchUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 font-medium text-white hover:bg-[#9d6af5]">
-                  <Play size={16} /> {watchUrl === siteConfig.mainWebsiteUrl ? 'Visit main website' : 'Watch full video'}
-                </a>
-              ) : (
-                <p className="rounded-full border border-border px-5 py-3 text-sm text-muted">Watch link is not configured for this title.</p>
-              )}
-              <Link href="/movies" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 font-medium text-white hover:border-primary/60">
-                <ArrowLeft size={16} /> Back to movies
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-8">
-            {video ? (
-              <div><h2 className="text-2xl font-semibold text-white">Preview</h2><div className="mt-4"><VideoPreview video={video} /></div></div>
-            ) : (
-              <div className="card-surface p-5 text-muted">Preview video not available for this title yet.</div>
-            )}
-            {reviews.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-semibold text-white">Notes & guide</h2>
-                <div className="mt-4 space-y-4">
-                  {reviews.map((review) => <article key={review.id} className="card-surface p-5"><h3 className="text-lg font-semibold text-white">{review.title}</h3><p className="mt-3 text-sm leading-7 text-muted">{review.content}</p></article>)}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <aside className="space-y-8">
-            <div className="card-surface p-5">
-              <h2 className="text-xl font-semibold text-white">Cast</h2>
-              <div className="mt-4 space-y-3">
-                {castEntries.map((person) => <div key={person.id} className="flex items-center gap-3"><img src={person.photoUrl} alt={person.name} className="h-12 w-12 rounded-full object-cover" /><div><p className="font-medium text-white">{person.name}</p><p className="text-sm text-muted">{person.role}</p></div></div>)}
-              </div>
-            </div>
-            {siteConfig.mainWebsiteUrl && (
-              <div className="card-surface p-5">
-                <h2 className="text-xl font-semibold text-white">Main website</h2>
-                <a href={siteConfig.mainWebsiteUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-primary hover:underline">Open main website <ExternalLink size={16} /></a>
-              </div>
-            )}
-          </aside>
+          {movie.genres.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{movie.genres.map((genre) => <span key={genre} className="rounded-full border border-border bg-panel px-3 py-1 text-xs text-text">{genre.replace(/-/g, ' ')}</span>)}</div>}
+          <p className="mt-6 whitespace-pre-line text-base leading-7 text-muted">{movie.overview}</p>
+          <Link href="/movies" className="mt-8 inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 font-medium text-white hover:border-primary/60"><ArrowLeft size={16} /> Back to movies</Link>
+          <p className="mt-6 text-xs text-muted">Movie data provided by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
         </div>
       </article>
-
-      {related.length > 0 && (
-        <section className="mt-12">
-          <h2 className="text-3xl font-semibold text-white">Related movies</h2>
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            {related.map((relatedMovie) => <Link key={relatedMovie.id} href={`/movies/${relatedMovie.slug}`} className="card-surface overflow-hidden p-3"><img src={relatedMovie.posterUrl} alt={relatedMovie.title} className="h-56 w-full rounded-xl object-cover" /><div className="mt-4 px-1 pb-1"><p className="text-lg font-medium text-white">{relatedMovie.title}</p><p className="mt-2 text-sm text-muted">{relatedMovie.releaseYear}</p></div></Link>)}
-          </div>
-        </section>
-      )}
     </main>
   );
 }
