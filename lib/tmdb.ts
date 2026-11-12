@@ -36,12 +36,7 @@ type TmdbResult = {
 type TmdbListResponse = { results?: TmdbResult[] };
 
 function slugify(value: string) {
-  return value
-    .normalize('NFKD')
-    .toLowerCase()
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  return value.normalize('NFKD').toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 function yearOf(date?: string) {
@@ -60,45 +55,26 @@ function formatRuntime(runtime?: number) {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
-function buildSlug(title: string, year?: number, id?: number) {
-  const base = slugify(title) || `title-${id ?? Date.now()}`;
-  return id ? `${base}${year ? `-${year}` : ''}-${id}` : `${base}${year ? `-${year}` : ''}`;
+// Keep the TMDB ID explicit so legacy title-year URLs cannot be mistaken for IDs.
+function buildSlug(title: string, year: number | undefined, id: number) {
+  const base = slugify(title) || `title-${id}`;
+  return `${base}${year ? `-${year}` : ''}-tmdb-${id}`;
 }
 
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
-  if (!items) return [];
-  if (typeof items[0] === 'object') {
-    return (items as Array<{ id: number; name: string }>)
-      .map((genre) => slugify(genre.name))
-      .filter(Boolean)
-      .slice(0, 4);
-  }
-  return [];
+  if (!items || typeof items[0] !== 'object') return [];
+  return (items as Array<{ id: number; name: string }>).map((genre) => slugify(genre.name)).filter(Boolean).slice(0, 4);
 }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
-  if (!token) {
-    throw new Error('TMDB_ACCESS_TOKEN is not configured.');
-  }
-
+  if (!token) throw new Error('TMDB_ACCESS_TOKEN is not configured.');
   const url = new URL(`https://api.themoviedb.org/3${path}`);
-  Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.set(key, String(value));
-  });
-
+  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
   const response = await fetch(url, {
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { accept: 'application/json', Authorization: `Bearer ${token}` },
     next: { revalidate: 3600 },
   });
-
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`TMDB request failed (${response.status}) for ${path}: ${detail.slice(0, 300)}`);
-  }
-
+  if (!response.ok) throw new Error(`TMDB request failed (${response.status}) for ${path}`);
   return (await response.json()) as T;
 }
 
@@ -107,9 +83,7 @@ function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
   const year = yearOf(item.release_date);
   const overview = (item.overview ?? '').trim();
   if (!year || overview.length < 10) return null;
-
   const runtimeLabel = formatRuntime(item.runtime);
-
   return {
     id: item.id,
     type: 'movie',
@@ -130,7 +104,6 @@ function mapSeries(item: TmdbResult): TmdbCatalogItem | null {
   const year = yearOf(item.first_air_date);
   const overview = (item.overview ?? '').trim();
   if (!year || overview.length < 10) return null;
-
   return {
     id: item.id,
     type: 'series',
@@ -151,36 +124,30 @@ export function hasTmdbToken() {
 }
 
 export function tmdbIdFromSlug(slug: string) {
-  return slug.match(/-(\\d+)$/)?.[1] ?? null;
+  const explicit = slug.match(/-tmdb-(\d+)$/)?.[1];
+  if (explicit) return explicit;
+  // Compatibility with old slugs like avatar-2009-19995, while avoiding years like 2009.
+  return slug.match(/-(\d{5,})$/)?.[1] ?? null;
 }
 
 function legacySlugParts(slug: string) {
-  const yearMatch = slug.match(/-(\\d{4})$/);
+  const normalized = slug.replace(/-tmdb-\d+$/, '').replace(/-\d{5,}$/, '');
+  const yearMatch = normalized.match(/-(\d{4})$/);
   const year = yearMatch ? Number(yearMatch[1]) : undefined;
-  const title = slug.replace(/-\\d{4}$/, '').replace(/-/g, ' ').trim();
+  const title = normalized.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
   return { title, titleSlug: slugify(title), year };
 }
 
 export async function getTmdbTrending(limit = 8) {
-  if (!token) {
-    return { movies: [], series: [] };
-  }
-
+  if (!token) return { movies: [], series: [] };
   try {
     const [movieResponse, seriesResponse] = await Promise.all([
-      tmdbFetch<{ results?: TmdbResult[] }>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
-      tmdbFetch<{ results?: TmdbResult[] }>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
+      tmdbFetch<TmdbListResponse>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
+      tmdbFetch<TmdbListResponse>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
     ]);
-
     return {
-      movies: (movieResponse.results ?? [])
-        .map((item) => mapMovie(item))
-        .filter((item): item is TmdbCatalogItem => item !== null)
-        .slice(0, limit),
-      series: (seriesResponse.results ?? [])
-        .map((item) => mapSeries(item))
-        .filter((item): item is TmdbCatalogItem => item !== null)
-        .slice(0, limit),
+      movies: (movieResponse.results ?? []).map(mapMovie).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
+      series: (seriesResponse.results ?? []).map(mapSeries).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
     };
   } catch (error) {
     console.error('Unable to load TMDB live feeds:', error);
@@ -189,60 +156,37 @@ export async function getTmdbTrending(limit = 8) {
 }
 
 export async function searchTmdb(query: string, limit = 12) {
-  if (!token || !query.trim()) {
-    return [] as TmdbCatalogItem[];
-  }
-
-  const response = await tmdbFetch<{ results?: TmdbResult[] }>('/search/multi', {
-    query: query.trim(),
-    include_adult: false,
-    language: defaultLanguage,
-    page: 1,
+  if (!token || !query.trim()) return [] as TmdbCatalogItem[];
+  const response = await tmdbFetch<TmdbListResponse>('/search/multi', {
+    query: query.trim(), include_adult: false, language: defaultLanguage, page: 1,
   });
-
   return (response.results ?? [])
     .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-    .map((item) => (item.media_type === 'movie' ? mapMovie(item) : mapSeries(item)))
+    .map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item))
     .filter((item): item is TmdbCatalogItem => item !== null)
     .slice(0, limit);
 }
 
 export async function getTmdbMovieById(id: string) {
-  if (!/^\\d+$/.test(id)) return null;
+  if (!/^\d+$/.test(id)) return null;
   return mapMovie(await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage }));
 }
 
 export async function getTmdbSeriesById(id: string) {
-  if (!/^\\d+$/.test(id)) return null;
+  if (!/^\d+$/.test(id)) return null;
   return mapSeries(await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage }));
 }
 
 export async function getTmdbMovieByLegacySlug(slug: string) {
   const { title, titleSlug, year } = legacySlugParts(slug);
   if (!title) return null;
-
   const results = await searchTmdb(title, 20);
-  return (
-    results.find(
-      (item) =>
-        item.type === 'movie' &&
-        slugify(item.title) === titleSlug &&
-        (!year || item.releaseYear === year)
-    ) ?? null
-  );
+  return results.find((item) => item.type === 'movie' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
 }
 
 export async function getTmdbSeriesByLegacySlug(slug: string) {
   const { title, titleSlug, year } = legacySlugParts(slug);
   if (!title) return null;
-
   const results = await searchTmdb(title, 20);
-  return (
-    results.find(
-      (item) =>
-        item.type === 'series' &&
-        slugify(item.title) === titleSlug &&
-        (!year || item.releaseYear === year)
-    ) ?? null
-  );
+  return results.find((item) => item.type === 'series' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
 }
