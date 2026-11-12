@@ -84,9 +84,7 @@ async function tmdbFetch<T>(path: string, params: Record<string, string | number
     next: { revalidate: 3600 },
   });
 
-  if (!response.ok) {
-    throw new Error(`TMDB request failed (${response.status}) for ${path}`);
-  }
+  if (!response.ok) throw new Error(`TMDB request failed (${response.status}) for ${path}`);
   return (await response.json()) as T;
 }
 
@@ -175,17 +173,35 @@ export async function searchTmdb(query: string, limit = 12) {
 
 export async function getTmdbMovieById(id: string) {
   if (!/^\d+$/.test(id)) return null;
-  const movie = await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage });
-  return mapMovie(movie);
+  return mapMovie(await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage }));
 }
 
 export async function getTmdbSeriesById(id: string) {
   if (!/^\d+$/.test(id)) return null;
-  const series = await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage });
-  return mapSeries(series);
+  return mapSeries(await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage }));
 }
 
 export function tmdbIdFromSlug(slug: string) {
-  const match = slug.match(/-(\d+)$/);
-  return match?.[1] ?? null;
+  return slug.match(/-(\d+)$/)?.[1] ?? null;
+}
+
+function legacySlugParts(slug: string) {
+  const yearMatch = slug.match(/-(\d{4})$/);
+  const year = yearMatch ? Number(yearMatch[1]) : undefined;
+  const title = slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
+  return { title, titleSlug: slugify(title), year };
+}
+
+export async function getTmdbMovieByLegacySlug(slug: string) {
+  const { title, titleSlug, year } = legacySlugParts(slug);
+  if (!title) return null;
+  const results = await searchTmdb(title, 20);
+  return results.find((item) => item.type === 'movie' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
+}
+
+export async function getTmdbSeriesByLegacySlug(slug: string) {
+  const { title, titleSlug, year } = legacySlugParts(slug);
+  if (!title) return null;
+  const results = await searchTmdb(title, 20);
+  return results.find((item) => item.type === 'series' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
 }
