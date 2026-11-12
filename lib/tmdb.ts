@@ -13,6 +13,7 @@ export type TmdbCatalogItem = {
   genres: string[];
   seasons?: number;
   runtimeLabel?: string;
+  duration?: string;
 };
 
 type TmdbResult = {
@@ -56,12 +57,24 @@ function formatRuntime(runtime?: number) {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
+function buildSlug(title: string, year?: number) {
+  const base = slugify(title) || `title-${Date.now()}`;
+  return year ? `${base}-${year}` : base;
+}
+
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
   if (!items) return [];
   if (typeof items[0] === 'object') {
-    return (items as Array<{ id: number; name: string }>).map((genre) => genre.name).slice(0, 4);
+    return (items as Array<{ id: number; name: string }>)
+      .map((genre) => slugify(genre.name))
+      .filter(Boolean)
+      .slice(0, 4);
   }
   return [];
+}
+
+function slugToTitle(slug: string) {
+  return slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
 }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number> = {}) {
@@ -96,17 +109,20 @@ function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
   const overview = (item.overview ?? '').trim();
   if (!year || overview.length < 10) return null;
 
+  const runtimeLabel = formatRuntime(item.runtime);
+
   return {
     id: item.id,
     type: 'movie',
     title,
-    slug: `${slugify(title) || `movie-${item.id}`}-${year}`,
+    slug: buildSlug(title, year),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
     rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated',
     genres: mapGenres(item.genres ?? item.genre_ids),
-    runtimeLabel: formatRuntime(item.runtime),
+    runtimeLabel,
+    duration: runtimeLabel,
   };
 }
 
@@ -120,7 +136,7 @@ function mapSeries(item: TmdbResult): TmdbCatalogItem | null {
     id: item.id,
     type: 'series',
     title,
-    slug: `${slugify(title) || `series-${item.id}`}-${year}`,
+    slug: buildSlug(title, year),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
@@ -146,7 +162,6 @@ export async function getTmdbTrending(limit = 8) {
 
   const movies = (movieResponse.results ?? [])
     .slice(0, limit)
-    .map((item) => ({ ...item, runtime: undefined }))
     .map((item) => mapMovie(item))
     .filter(Boolean) as TmdbCatalogItem[];
 
@@ -173,6 +188,20 @@ export async function searchTmdb(query: string, limit = 12) {
   return (response.results ?? [])
     .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
     .slice(0, limit)
-    .map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item))
+    .map((item) => (item.media_type === 'movie' ? mapMovie(item) : mapSeries(item)))
     .filter(Boolean) as TmdbCatalogItem[];
+}
+
+export async function getTmdbMovieBySlug(slug: string) {
+  const title = slugToTitle(slug);
+  if (!title) return null;
+  const results = await searchTmdb(title, 8);
+  return results.find((item) => item.type === 'movie' && item.slug === slug) ?? null;
+}
+
+export async function getTmdbSeriesBySlug(slug: string) {
+  const title = slugToTitle(slug);
+  if (!title) return null;
+  const results = await searchTmdb(title, 8);
+  return results.find((item) => item.type === 'series' && item.slug === slug) ?? null;
 }
