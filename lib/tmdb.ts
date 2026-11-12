@@ -30,7 +30,10 @@ type TmdbResult = {
   genres?: Array<{ id: number; name: string }>;
   number_of_seasons?: number;
   runtime?: number;
+  episode_run_time?: number[];
 };
+
+type TmdbListResponse = { results?: TmdbResult[] };
 
 function slugify(value: string) {
   return value
@@ -57,9 +60,9 @@ function formatRuntime(runtime?: number) {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
-function buildSlug(title: string, year?: number) {
-  const base = slugify(title) || `title-${Date.now()}`;
-  return year ? `${base}-${year}` : base;
+function buildSlug(title: string, year?: number, id?: number) {
+  const base = slugify(title) || `title-${id ?? Date.now()}`;
+  return id ? `${base}${year ? `-${year}` : ''}-${id}` : `${base}${year ? `-${year}` : ''}`;
 }
 
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
@@ -71,10 +74,6 @@ function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
       .slice(0, 4);
   }
   return [];
-}
-
-function slugToTitle(slug: string) {
-  return slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
 }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
@@ -110,11 +109,12 @@ function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
   if (!year || overview.length < 10) return null;
 
   const runtimeLabel = formatRuntime(item.runtime);
+
   return {
     id: item.id,
     type: 'movie',
     title,
-    slug: buildSlug(title, year),
+    slug: buildSlug(title, year, item.id),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
@@ -135,13 +135,14 @@ function mapSeries(item: TmdbResult): TmdbCatalogItem | null {
     id: item.id,
     type: 'series',
     title,
-    slug: buildSlug(title, year),
+    slug: buildSlug(title, year, item.id),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
     rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated',
     genres: mapGenres(item.genres ?? item.genre_ids),
     seasons: item.number_of_seasons ?? 1,
+    runtimeLabel: formatRuntime(item.episode_run_time?.[0]),
   };
 }
 
@@ -149,26 +150,42 @@ export function hasTmdbToken() {
   return Boolean(token);
 }
 
+export function tmdbIdFromSlug(slug: string) {
+  return slug.match(/-(\\d+)$/)?.[1] ?? null;
+}
+
+function legacySlugParts(slug: string) {
+  const yearMatch = slug.match(/-(\\d{4})$/);
+  const year = yearMatch ? Number(yearMatch[1]) : undefined;
+  const title = slug.replace(/-\\d{4}$/, '').replace(/-/g, ' ').trim();
+  return { title, titleSlug: slugify(title), year };
+}
+
 export async function getTmdbTrending(limit = 8) {
   if (!token) {
     return { movies: [], series: [] };
   }
 
-  const [movieResponse, seriesResponse] = await Promise.all([
-    tmdbFetch<{ results?: TmdbResult[] }>('/movie/popular', { language: defaultLanguage, page: 1 }),
-    tmdbFetch<{ results?: TmdbResult[] }>('/tv/popular', { language: defaultLanguage, page: 1 }),
-  ]);
+  try {
+    const [movieResponse, seriesResponse] = await Promise.all([
+      tmdbFetch<{ results?: TmdbResult[] }>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
+      tmdbFetch<{ results?: TmdbResult[] }>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
+    ]);
 
-  const movies = (movieResponse.results ?? [])
-    .slice(0, limit)
-    .map((item) => mapMovie(item))
-    .filter(Boolean) as TmdbCatalogItem[];
-  const series = (seriesResponse.results ?? [])
-    .slice(0, limit)
-    .map((item) => mapSeries(item))
-    .filter(Boolean) as TmdbCatalogItem[];
-
-  return { movies, series };
+    return {
+      movies: (movieResponse.results ?? [])
+        .map((item) => mapMovie(item))
+        .filter((item): item is TmdbCatalogItem => item !== null)
+        .slice(0, limit),
+      series: (seriesResponse.results ?? [])
+        .map((item) => mapSeries(item))
+        .filter((item): item is TmdbCatalogItem => item !== null)
+        .slice(0, limit),
+    };
+  } catch (error) {
+    console.error('Unable to load TMDB live feeds:', error);
+    return { movies: [], series: [] };
+  }
 }
 
 export async function searchTmdb(query: string, limit = 12) {
@@ -185,21 +202,47 @@ export async function searchTmdb(query: string, limit = 12) {
 
   return (response.results ?? [])
     .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-    .slice(0, limit)
     .map((item) => (item.media_type === 'movie' ? mapMovie(item) : mapSeries(item)))
-    .filter(Boolean) as TmdbCatalogItem[];
+    .filter((item): item is TmdbCatalogItem => item !== null)
+    .slice(0, limit);
 }
 
-export async function getTmdbMovieBySlug(slug: string) {
-  const title = slugToTitle(slug);
-  if (!title) return null;
-  const results = await searchTmdb(title, 8);
-  return results.find((item) => item.type === 'movie' && item.slug === slug) ?? null;
+export async function getTmdbMovieById(id: string) {
+  if (!/^\\d+$/.test(id)) return null;
+  return mapMovie(await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage }));
 }
 
-export async function getTmdbSeriesBySlug(slug: string) {
-  const title = slugToTitle(slug);
+export async function getTmdbSeriesById(id: string) {
+  if (!/^\\d+$/.test(id)) return null;
+  return mapSeries(await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage }));
+}
+
+export async function getTmdbMovieByLegacySlug(slug: string) {
+  const { title, titleSlug, year } = legacySlugParts(slug);
   if (!title) return null;
-  const results = await searchTmdb(title, 8);
-  return results.find((item) => item.type === 'series' && item.slug === slug) ?? null;
+
+  const results = await searchTmdb(title, 20);
+  return (
+    results.find(
+      (item) =>
+        item.type === 'movie' &&
+        slugify(item.title) === titleSlug &&
+        (!year || item.releaseYear === year)
+    ) ?? null
+  );
+}
+
+export async function getTmdbSeriesByLegacySlug(slug: string) {
+  const { title, titleSlug, year } = legacySlugParts(slug);
+  if (!title) return null;
+
+  const results = await searchTmdb(title, 20);
+  return (
+    results.find(
+      (item) =>
+        item.type === 'series' &&
+        slugify(item.title) === titleSlug &&
+        (!year || item.releaseYear === year)
+    ) ?? null
+  );
 }
