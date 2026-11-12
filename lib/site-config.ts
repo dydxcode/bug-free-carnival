@@ -24,10 +24,14 @@ const siteUrl =
   parseHost(process.env.VERCEL_URL)?.origin ??
   'http://localhost:3000';
 
+const sharedFreeWatchUrl = process.env.FREE_WATCH_URL;
+
 export const siteConfig = {
   siteName: 'Bug Free Carnival',
   siteUrl,
   mainWebsiteUrl: parseHttpUrl(process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL)?.toString().replace(/\/$/, ''),
+  freeWatchMovieUrl: parseHttpUrl(process.env.FREE_WATCH_MOVIE_URL ?? sharedFreeWatchUrl)?.toString(),
+  freeWatchSeriesUrl: parseHttpUrl(process.env.FREE_WATCH_SERIES_URL ?? sharedFreeWatchUrl)?.toString(),
   googleAnalyticsId: /^G-[A-Z0-9]+$/.test(process.env.GA_MEASUREMENT_ID ?? '') &&
     process.env.GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX'
     ? process.env.GA_MEASUREMENT_ID
