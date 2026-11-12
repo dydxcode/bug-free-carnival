@@ -44,7 +44,7 @@ export const SeriesSchema = z.object({
   releaseYear: z.number().int().min(1900),
   genres: z.array(z.string().min(1)),
   cast: z.array(z.string().min(1)),
-  seasons: z.number().int().min(0),
+  seasons: z.number().int().min(1),
   seoTitle: z.string().min(1),
   seoDescription: z.string().min(1),
   status: z.enum(['draft', 'published', 'archived']),

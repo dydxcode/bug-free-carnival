@@ -25,7 +25,6 @@ const allReviews = parseData(rawReviews, z.array(ReviewSchema), 'data/reviews.js
 const videoEmbeds = parseData(rawEmbeds, z.array(VideoEmbedSchema), 'data/video-embeds.json');
 const settings = parseData(rawSettings, SettingsSchema, 'data/settings.json');
 
-// Draft and archived catalog items are deliberately excluded from public pages.
 const movies = allMovies.filter((movie) => movie.status === 'published');
 const series = allSeries.filter((item) => item.status === 'published');
 const reviews = allReviews.filter((review) => movies.some((movie) => movie.id === review.targetId) || series.some((item) => item.id === review.targetId));
