@@ -11,21 +11,37 @@
   --muted: #9CA3B4;
   --primary: #8B5CF6;
   --accent: #A78BFA;
+  color-scheme: dark;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
   margin: 0;
-  background: var(--background);
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(139, 92, 246, 0.08), transparent 42%),
+    var(--background);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 a {
@@ -55,4 +71,13 @@ button, input, select {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
