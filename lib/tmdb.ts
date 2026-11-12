@@ -55,9 +55,11 @@ function formatRuntime(runtime?: number) {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
+// The explicit marker prevents a legacy title-year slug such as avatar-2009
+// from being mistaken for TMDB ID 2009.
 function buildSlug(title: string, year: number | undefined, id: number) {
   const base = slugify(title) || `title-${id}`;
-  return `${base}${year ? `-${year}` : ''}-${id}`;
+  return `${base}${year ? `-${year}` : ''}-tmdb-${id}`;
 }
 
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
@@ -123,13 +125,18 @@ export function hasTmdbToken() {
 }
 
 export function tmdbIdFromSlug(slug: string) {
-  return slug.match(/-(\d+)$/)?.[1] ?? null;
+  // New URLs use an explicit suffix; accept old generated ID slugs too, but
+  // never mistake a four-digit year-only legacy slug for an ID.
+  const explicit = slug.match(/-tmdb-(\d+)$/)?.[1];
+  if (explicit) return explicit;
+  return slug.match(/-(\d{5,})$/)?.[1] ?? null;
 }
 
 function legacySlugParts(slug: string) {
-  const yearMatch = slug.match(/-(\d{4})$/);
+  const normalized = slug.replace(/-tmdb-\d+$/, '').replace(/-\d{5,}$/, '');
+  const yearMatch = normalized.match(/-(\d{4})$/);
   const year = yearMatch ? Number(yearMatch[1]) : undefined;
-  const title = slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
+  const title = normalized.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
   return { title, titleSlug: slugify(title), year };
 }
 
