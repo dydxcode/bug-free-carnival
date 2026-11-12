@@ -63,18 +63,11 @@ function buildSlug(title: string, year?: number) {
 }
 
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
-  if (!items) return [];
-  if (typeof items[0] === 'object') {
-    return (items as Array<{ id: number; name: string }>)
-      .map((genre) => slugify(genre.name))
-      .filter(Boolean)
-      .slice(0, 4);
-  }
-  return [];
-}
-
-function slugToTitle(slug: string) {
-  return slug.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
+  if (!items || typeof items[0] !== 'object') return [];
+  return (items as Array<{ id: number; name: string }>)
+    .map((genre) => slugify(genre.name))
+    .filter(Boolean)
+    .slice(0, 4);
 }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
@@ -83,23 +76,16 @@ async function tmdbFetch<T>(path: string, params: Record<string, string | number
   }
 
   const url = new URL(`https://api.themoviedb.org/3${path}`);
-  Object.entries(params).forEach(([key, value]) => {
-    url.searchParams.set(key, String(value));
-  });
+  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
 
   const response = await fetch(url, {
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { accept: 'application/json', Authorization: `Bearer ${token}` },
     next: { revalidate: 3600 },
   });
 
   if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`TMDB request failed (${response.status}) for ${path}: ${detail.slice(0, 300)}`);
+    throw new Error(`TMDB request failed (${response.status}) for ${path}`);
   }
-
   return (await response.json()) as T;
 }
 
@@ -150,31 +136,20 @@ export function hasTmdbToken() {
 }
 
 export async function getTmdbTrending(limit = 8) {
-  if (!token) {
-    return { movies: [], series: [] };
-  }
+  if (!token) return { movies: [], series: [] };
 
   const [movieResponse, seriesResponse] = await Promise.all([
-    tmdbFetch<{ results?: TmdbResult[] }>('/movie/popular', { language: defaultLanguage, page: 1 }),
-    tmdbFetch<{ results?: TmdbResult[] }>('/tv/popular', { language: defaultLanguage, page: 1 }),
+    tmdbFetch<{ results?: TmdbResult[] }>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
+    tmdbFetch<{ results?: TmdbResult[] }>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
   ]);
 
-  const movies = (movieResponse.results ?? [])
-    .slice(0, limit)
-    .map((item) => mapMovie(item))
-    .filter(Boolean) as TmdbCatalogItem[];
-  const series = (seriesResponse.results ?? [])
-    .slice(0, limit)
-    .map((item) => mapSeries(item))
-    .filter(Boolean) as TmdbCatalogItem[];
-
+  const movies = (movieResponse.results ?? []).slice(0, limit).map(mapMovie).filter(Boolean) as TmdbCatalogItem[];
+  const series = (seriesResponse.results ?? []).slice(0, limit).map(mapSeries).filter(Boolean) as TmdbCatalogItem[];
   return { movies, series };
 }
 
 export async function searchTmdb(query: string, limit = 12) {
-  if (!token || !query.trim()) {
-    return [] as TmdbCatalogItem[];
-  }
+  if (!token || !query.trim()) return [] as TmdbCatalogItem[];
 
   const response = await tmdbFetch<{ results?: TmdbResult[] }>('/search/multi', {
     query: query.trim(),
@@ -186,20 +161,18 @@ export async function searchTmdb(query: string, limit = 12) {
   return (response.results ?? [])
     .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
     .slice(0, limit)
-    .map((item) => (item.media_type === 'movie' ? mapMovie(item) : mapSeries(item)))
+    .map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item))
     .filter(Boolean) as TmdbCatalogItem[];
 }
 
-export async function getTmdbMovieBySlug(slug: string) {
-  const title = slugToTitle(slug);
-  if (!title) return null;
-  const results = await searchTmdb(title, 8);
-  return results.find((item) => item.type === 'movie' && item.slug === slug) ?? null;
+export async function getTmdbMovieById(id: string) {
+  if (!/^\d+$/.test(id)) return null;
+  const movie = await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage });
+  return mapMovie(movie);
 }
 
-export async function getTmdbSeriesBySlug(slug: string) {
-  const title = slugToTitle(slug);
-  if (!title) return null;
-  const results = await searchTmdb(title, 8);
-  return results.find((item) => item.type === 'series' && item.slug === slug) ?? null;
+export async function getTmdbSeriesById(id: string) {
+  if (!/^\d+$/.test(id)) return null;
+  const series = await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage });
+  return mapSeries(series);
 }
