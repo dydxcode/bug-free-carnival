@@ -4,17 +4,18 @@ import { ArrowLeft, Clock3, Film, Star } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { getMovieBySlug } from '@/lib/data';
 import { getTmdbMovieById, getTmdbMovieByLegacySlug, tmdbIdFromSlug } from '@/lib/tmdb';
-import { siteConfig } from '@/lib/site-config';
+import { getFreeWatchUrlForSlug } from '@/lib/site-config';
 
 export const metadata: Metadata = { title: 'Movie details' };
 
 type MoviePageProps = { params: Promise<{ slug: string }> };
 
-function FreeWatchLink() {
-  if (!siteConfig.freeWatchMovieUrl) return null;
+function FreeWatchLink({ slug }: { slug?: string }) {
+  const url = getFreeWatchUrlForSlug('movie', slug);
+  if (!url) return null;
   return (
     <a
-      href={siteConfig.freeWatchMovieUrl}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center justify-center rounded-lg border-2 border-[#8b5cf6] bg-[#6d28d9] px-5 py-3 font-bold tracking-wide text-white transition-colors hover:bg-[#7c3aed] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -44,7 +45,7 @@ export default async function MovieDetailPage({ params }: MoviePageProps) {
             </div>
             <p className="mt-6 whitespace-pre-line text-base leading-7 text-muted">{localMovie.synopsis}</p>
             <div className="mt-8 flex flex-col items-start gap-3">
-              <FreeWatchLink />
+              <FreeWatchLink slug={slug} />
               <Link href="/movies" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 font-medium text-white hover:border-primary/60"><ArrowLeft size={16} /> Back to movies</Link>
             </div>
           </div>
@@ -87,7 +88,7 @@ export default async function MovieDetailPage({ params }: MoviePageProps) {
           {movie.genres.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{movie.genres.map((genre) => <span key={genre} className="rounded-full border border-border bg-panel px-3 py-1 text-xs text-text">{genre.replace(/-/g, ' ')}</span>)}</div>}
           <p className="mt-6 whitespace-pre-line text-base leading-7 text-muted">{movie.overview}</p>
           <div className="mt-8 flex flex-col items-start gap-3">
-            <FreeWatchLink />
+            <FreeWatchLink slug={slug} />
             <Link href="/movies" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 font-medium text-white hover:border-primary/60"><ArrowLeft size={16} /> Back to movies</Link>
           </div>
           <p className="mt-6 text-xs text-muted">Movie data provided by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
