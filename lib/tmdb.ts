@@ -2,191 +2,83 @@ const token = process.env.TMDB_ACCESS_TOKEN;
 const defaultLanguage = process.env.TMDB_LANGUAGE ?? 'en-US';
 
 export type TmdbCatalogItem = {
-  id: number;
-  type: 'movie' | 'series';
-  title: string;
-  slug: string;
-  overview: string;
-  posterUrl: string;
-  releaseYear: number;
-  rating: string;
-  genres: string[];
-  seasons?: number;
-  runtimeLabel?: string;
-  duration?: string;
+  id: number; type: 'movie' | 'series'; title: string; slug: string; overview: string;
+  posterUrl: string; releaseYear: number; rating: string; genres: string[];
+  seasons?: number; runtimeLabel?: string; duration?: string;
 };
 
 type TmdbResult = {
-  id: number;
-  media_type?: 'movie' | 'tv';
-  title?: string;
-  name?: string;
-  overview?: string;
-  poster_path?: string | null;
-  release_date?: string;
-  first_air_date?: string;
-  vote_average?: number;
-  genre_ids?: number[];
-  genres?: Array<{ id: number; name: string }>;
-  number_of_seasons?: number;
-  runtime?: number;
-  episode_run_time?: number[];
+  id: number; media_type?: 'movie' | 'tv'; title?: string; name?: string; overview?: string;
+  poster_path?: string | null; release_date?: string; first_air_date?: string; vote_average?: number;
+  genre_ids?: number[]; genres?: Array<{ id: number; name: string }>; number_of_seasons?: number;
+  runtime?: number; episode_run_time?: number[];
 };
-
 type TmdbListResponse = { results?: TmdbResult[] };
+type FeedType = 'movie' | 'series';
 
-function slugify(value: string) {
-  return value.normalize('NFKD').toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-
-function yearOf(date?: string) {
-  const parsed = Number.parseInt((date ?? '').slice(0, 4), 10);
-  return Number.isInteger(parsed) && parsed >= 1900 ? parsed : undefined;
-}
-
-function imageUrl(path?: string | null, size = 'w500') {
-  return path ? `https://image.tmdb.org/t/p/${size}${path}` : 'https://placehold.co/800x1200/191D27/F5F6FA?text=No+Image';
-}
-
-function formatRuntime(runtime?: number) {
-  if (!runtime) return 'Runtime unavailable';
-  const hours = Math.floor(runtime / 60);
-  const minutes = runtime % 60;
-  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
-}
-
-// Keep the TMDB ID explicit so legacy title-year URLs cannot be mistaken for IDs.
-function buildSlug(title: string, year: number | undefined, id: number) {
-  const base = slugify(title) || `title-${id}`;
-  return `${base}${year ? `-${year}` : ''}-tmdb-${id}`;
-}
-
-function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
-  if (!items || typeof items[0] !== 'object') return [];
-  return (items as Array<{ id: number; name: string }>).map((genre) => slugify(genre.name)).filter(Boolean).slice(0, 4);
-}
+function slugify(value: string) { return value.normalize('NFKD').toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function yearOf(date?: string) { const parsed = Number.parseInt((date ?? '').slice(0, 4), 10); return Number.isInteger(parsed) && parsed >= 1900 ? parsed : undefined; }
+function imageUrl(path?: string | null, size = 'w500') { return path ? `https://image.tmdb.org/t/p/${size}${path}` : 'https://placehold.co/800x1200/191D27/F5F6FA?text=No+Image'; }
+function formatRuntime(runtime?: number) { if (!runtime) return 'Runtime unavailable'; const hours = Math.floor(runtime / 60); const minutes = runtime % 60; return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`; }
+function buildSlug(title: string, year: number | undefined, id: number) { const base = slugify(title) || `title-${id}`; return `${base}${year ? `-${year}` : ''}-tmdb-${id}`; }
+function mapGenres(items?: Array<{ id: number; name: string }> | number[]) { if (!items || typeof items[0] !== 'object') return []; return (items as Array<{ id: number; name: string }>).map((genre) => slugify(genre.name)).filter(Boolean).slice(0, 4); }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
   if (!token) throw new Error('TMDB_ACCESS_TOKEN is not configured.');
   const url = new URL(`https://api.themoviedb.org/3${path}`);
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
-  const response = await fetch(url, {
-    headers: { accept: 'application/json', Authorization: `Bearer ${token}` },
-    next: { revalidate: 3600 },
-  });
+  const response = await fetch(url, { headers: { accept: 'application/json', Authorization: `Bearer ${token}` }, next: { revalidate: 3600 } });
   if (!response.ok) throw new Error(`TMDB request failed (${response.status}) for ${path}`);
   return (await response.json()) as T;
 }
 
 function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
-  const title = item.title ?? 'Untitled movie';
-  const year = yearOf(item.release_date);
-  const overview = (item.overview ?? '').trim();
+  const title = item.title ?? 'Untitled movie'; const year = yearOf(item.release_date); const overview = (item.overview ?? '').trim();
   if (!year || overview.length < 10) return null;
-  const runtimeLabel = formatRuntime(item.runtime);
-  return {
-    id: item.id,
-    type: 'movie',
-    title,
-    slug: buildSlug(title, year, item.id),
-    overview,
-    posterUrl: imageUrl(item.poster_path),
-    releaseYear: year,
-    rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated',
-    genres: mapGenres(item.genres ?? item.genre_ids),
-    runtimeLabel,
-    duration: runtimeLabel,
-  };
+  const duration = formatRuntime(item.runtime);
+  return { id: item.id, type: 'movie', title, slug: buildSlug(title, year, item.id), overview, posterUrl: imageUrl(item.poster_path), releaseYear: year, rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated', genres: mapGenres(item.genres ?? item.genre_ids), runtimeLabel: duration, duration };
 }
-
 function mapSeries(item: TmdbResult): TmdbCatalogItem | null {
-  const title = item.name ?? 'Untitled series';
-  const year = yearOf(item.first_air_date);
-  const overview = (item.overview ?? '').trim();
+  const title = item.name ?? 'Untitled series'; const year = yearOf(item.first_air_date); const overview = (item.overview ?? '').trim();
   if (!year || overview.length < 10) return null;
-  return {
-    id: item.id,
-    type: 'series',
-    title,
-    slug: buildSlug(title, year, item.id),
-    overview,
-    posterUrl: imageUrl(item.poster_path),
-    releaseYear: year,
-    rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated',
-    genres: mapGenres(item.genres ?? item.genre_ids),
-    seasons: item.number_of_seasons ?? 1,
-    runtimeLabel: formatRuntime(item.episode_run_time?.[0]),
-  };
+  return { id: item.id, type: 'series', title, slug: buildSlug(title, year, item.id), overview, posterUrl: imageUrl(item.poster_path), releaseYear: year, rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated', genres: mapGenres(item.genres ?? item.genre_ids), seasons: item.number_of_seasons ?? 1, runtimeLabel: formatRuntime(item.episode_run_time?.[0]) };
 }
+function mapFeed(items: TmdbResult[], type: FeedType, limit: number) { return items.map(type === 'movie' ? mapMovie : mapSeries).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit); }
 
-export function hasTmdbToken() {
-  return Boolean(token);
-}
-
-export function tmdbIdFromSlug(slug: string) {
-  const explicit = slug.match(/-tmdb-(\d+)$/)?.[1];
-  if (explicit) return explicit;
-  // Compatibility with old slugs like avatar-2009-19995, while avoiding years like 2009.
-  return slug.match(/-(\d{5,})$/)?.[1] ?? null;
-}
-
-function legacySlugParts(slug: string) {
-  const normalized = slug.replace(/-tmdb-\d+$/, '').replace(/-\d{5,}$/, '');
-  const yearMatch = normalized.match(/-(\d{4})$/);
-  const year = yearMatch ? Number(yearMatch[1]) : undefined;
-  const title = normalized.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim();
-  return { title, titleSlug: slugify(title), year };
-}
+export function hasTmdbToken() { return Boolean(token); }
+export function tmdbIdFromSlug(slug: string) { return slug.match(/-tmdb-(\d+)$/)?.[1] ?? slug.match(/-(\d{5,})$/)?.[1] ?? null; }
+function legacySlugParts(slug: string) { const normalized = slug.replace(/-tmdb-\d+$/, '').replace(/-\d{5,}$/, ''); const yearMatch = normalized.match(/-(\d{4})$/); const year = yearMatch ? Number(yearMatch[1]) : undefined; const title = normalized.replace(/-\d{4}$/, '').replace(/-/g, ' ').trim(); return { title, titleSlug: slugify(title), year }; }
 
 export async function getTmdbTrending(limit = 8) {
   if (!token) return { movies: [], series: [] };
   try {
-    const [movieResponse, seriesResponse] = await Promise.all([
-      tmdbFetch<TmdbListResponse>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
-      tmdbFetch<TmdbListResponse>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
-    ]);
-    return {
-      movies: (movieResponse.results ?? []).map(mapMovie).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
-      series: (seriesResponse.results ?? []).map(mapSeries).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
-    };
-  } catch (error) {
-    console.error('Unable to load TMDB live feeds:', error);
-    return { movies: [], series: [] };
-  }
+    const [movieResponse, seriesResponse] = await Promise.all([tmdbFetch<TmdbListResponse>('/movie/now_playing', { language: defaultLanguage, page: 1 }), tmdbFetch<TmdbListResponse>('/tv/on_the_air', { language: defaultLanguage, page: 1 })]);
+    return { movies: mapFeed(movieResponse.results ?? [], 'movie', limit), series: mapFeed(seriesResponse.results ?? [], 'series', limit) };
+  } catch (error) { console.error('Unable to load TMDB live feeds:', error); return { movies: [], series: [] }; }
+}
+
+async function fetchFeed(path: string, type: FeedType, limit: number): Promise<TmdbCatalogItem[]> {
+  try { const response = await tmdbFetch<TmdbListResponse>(path, { language: defaultLanguage, page: 1 }); return mapFeed(response.results ?? [], type, limit); }
+  catch (error) { console.error(`Unable to load TMDB feed ${path}:`, error); return []; }
+}
+
+export async function getTmdbDiscovery(limit = 6) {
+  if (!token) return { topPicks: [], trending: [], recentlyAdded: [] };
+  const [topMovies, topSeries, trendingMovies, trendingSeries, newMovies, newSeries] = await Promise.all([
+    fetchFeed('/movie/top_rated', 'movie', limit), fetchFeed('/tv/top_rated', 'series', limit),
+    fetchFeed('/trending/movie/week', 'movie', limit), fetchFeed('/trending/tv/week', 'series', limit),
+    fetchFeed('/movie/now_playing', 'movie', limit), fetchFeed('/tv/on_the_air', 'series', limit),
+  ]);
+  const combine = (movies: TmdbCatalogItem[], series: TmdbCatalogItem[]) => [...movies, ...series].sort((a, b) => b.releaseYear - a.releaseYear).slice(0, limit);
+  return { topPicks: combine(topMovies, topSeries), trending: combine(trendingMovies, trendingSeries), recentlyAdded: combine(newMovies, newSeries) };
 }
 
 export async function searchTmdb(query: string, limit = 12) {
   if (!token || !query.trim()) return [] as TmdbCatalogItem[];
-  const response = await tmdbFetch<TmdbListResponse>('/search/multi', {
-    query: query.trim(), include_adult: false, language: defaultLanguage, page: 1,
-  });
-  return (response.results ?? [])
-    .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-    .map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item))
-    .filter((item): item is TmdbCatalogItem => item !== null)
-    .slice(0, limit);
+  const response = await tmdbFetch<TmdbListResponse>('/search/multi', { query: query.trim(), include_adult: false, language: defaultLanguage, page: 1 });
+  return (response.results ?? []).filter((item) => item.media_type === 'movie' || item.media_type === 'tv').map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item)).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit);
 }
-
-export async function getTmdbMovieById(id: string) {
-  if (!/^\d+$/.test(id)) return null;
-  return mapMovie(await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage }));
-}
-
-export async function getTmdbSeriesById(id: string) {
-  if (!/^\d+$/.test(id)) return null;
-  return mapSeries(await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage }));
-}
-
-export async function getTmdbMovieByLegacySlug(slug: string) {
-  const { title, titleSlug, year } = legacySlugParts(slug);
-  if (!title) return null;
-  const results = await searchTmdb(title, 20);
-  return results.find((item) => item.type === 'movie' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
-}
-
-export async function getTmdbSeriesByLegacySlug(slug: string) {
-  const { title, titleSlug, year } = legacySlugParts(slug);
-  if (!title) return null;
-  const results = await searchTmdb(title, 20);
-  return results.find((item) => item.type === 'series' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null;
-}
+export async function getTmdbMovieById(id: string) { if (!/^\d+$/.test(id)) return null; return mapMovie(await tmdbFetch<TmdbResult>(`/movie/${id}`, { language: defaultLanguage })); }
+export async function getTmdbSeriesById(id: string) { if (!/^\d+$/.test(id)) return null; return mapSeries(await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage })); }
+export async function getTmdbMovieByLegacySlug(slug: string) { const { title, titleSlug, year } = legacySlugParts(slug); if (!title) return null; const results = await searchTmdb(title, 20); return results.find((item) => item.type === 'movie' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null; }
+export async function getTmdbSeriesByLegacySlug(slug: string) { const { title, titleSlug, year } = legacySlugParts(slug); if (!title) return null; const results = await searchTmdb(title, 20); return results.find((item) => item.type === 'series' && slugify(item.title) === titleSlug && (!year || item.releaseYear === year)) ?? null; }

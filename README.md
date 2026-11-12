@@ -1,24 +1,22 @@
 # Bug Free Carnival
 
-A dark, cinematic Movie & Series Discovery landing page built with Next.js 16, TypeScript, Tailwind CSS, and static JSON data.
+A responsive movie and series discovery site built with Next.js, TypeScript, Tailwind CSS, and TMDB.
 
-## Important
+## TMDB setup
 
-The default data in this repository is demo-only and should be replaced with production-ready content before publishing live.
+Set `TMDB_ACCESS_TOKEN` in Vercel (server-only). Optionally set `TMDB_LANGUAGE` (default `en-US`). Redeploy after editing environment variables.
 
-## Configurable “GRATIS MENONTON” links
+## “GRATIS MENONTON” destinations
 
-Add these environment variables in the Vercel project settings. Values must be complete `https://` or `http://` URLs.
+Configure `FREE_WATCH_MOVIE_URL`, `FREE_WATCH_SERIES_URL`, and/or shared `FREE_WATCH_URL` as full HTTP(S) URLs. Per-title maps are also supported:
 
-- `FREE_WATCH_MOVIE_URL`: global fallback URL for movie detail pages.
-- `FREE_WATCH_SERIES_URL`: global fallback URL for series detail pages.
-- `FREE_WATCH_URL`: shared fallback for both types when the type-specific value is not set.
-- `FREE_WATCH_MOVIE_URLS`: optional JSON map for per-title overrides, e.g. `{"avatar-2009-19995":"https://example.com/watch/avatar"}`.
-- `FREE_WATCH_SERIES_URLS`: optional JSON map for per-title overrides, e.g. `{"breaking-bad-2008-tmdb-1396":"https://example.com/watch/breaking-bad"}`.
+- `FREE_WATCH_MOVIE_URLS`: JSON object keyed by movie slug.
+- `FREE_WATCH_SERIES_URLS`: JSON object keyed by series slug.
 
-Priority is:
-1. Per-title override map for that specific slug
-2. Type-specific global fallback (`FREE_WATCH_MOVIE_URL` or `FREE_WATCH_SERIES_URL`)
-3. Shared fallback (`FREE_WATCH_URL`)
+Precedence is per-title, type-specific global, then shared. The buttons are hidden when there is no valid configured URL.
 
-If a value is empty, the button is hidden. Redeploy after changing environment variables so the server-rendered pages pick up the new values.
+## Discovery and personal features
+
+The home page uses TMDB top-rated, weekly trending, now-playing, and on-the-air feeds for Top Picks, Trending Now, and Recently Added shelves. These feeds use Next.js revalidation and show a useful fallback if TMDB is unavailable.
+
+Watchlist, recently opened watch links, and the light/dark preference are saved locally in the visitor's browser; no login or extra environment variables are required. The watchlist is per browser/device and is not synchronized across devices.
