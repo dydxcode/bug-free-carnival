@@ -1,20 +1,9 @@
-import { getAllGenres, getFeaturedMovies, getPopularMovies, getAllSeries } from '@/lib/data';
-import { MovieCard } from '@/components/movie-card';
-import { SeriesCard } from '@/components/series-card';
-import { GenrePill } from '@/components/genre-pill';
-import { SectionHeading } from '@/components/section-heading';
 import Link from 'next/link';
+import { Search } from 'lucide-react';
+import { getTmdbTrending } from '@/lib/tmdb';
 
-export const metadata = {
-  title: 'Discover Movies & Series',
-  description: 'Browse cinematic picks, trending titles, and series recommendations curated for discovery.',
-};
-
-export default function HomePage() {
-  const featuredMovies = getFeaturedMovies();
-  const popularMovies = getPopularMovies();
-  const allSeries = getAllSeries().slice(0, 3);
-  const genres = getAllGenres();
+export default async function HomePage() {
+  const { movies, series } = await getTmdbTrending(6);
 
   return (
     <main>
@@ -26,88 +15,89 @@ export default function HomePage() {
               Find your next <span className="text-gradient">movie night</span> fix.
             </h1>
             <p className="mt-5 max-w-2xl text-base text-muted md:text-lg">
-              Explore trending movies, binge-worthy series, and polished recommendations designed for search-friendly discovery.
+              Browse live TMDB movies and series, search the newest titles, and discover trending stories without manual JSON updates.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/movies" className="rounded-full bg-primary px-5 py-3 font-medium text-white transition hover:bg-[#9d6af5]">
-                Browse movies
+              <Link href="/search" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 font-medium text-white transition hover:bg-[#9d6af5]">
+                <Search size={16} /> Search TMDB
               </Link>
-              <Link href="/series" className="rounded-full border border-border bg-card px-5 py-3 font-medium text-text transition hover:border-primary/60">
-                Explore series
+              <Link href="/movies" className="rounded-full border border-border bg-card px-5 py-3 font-medium text-text transition hover:border-primary/60">
+                Browse catalog
               </Link>
             </div>
           </div>
-          <div className="relative">
-            <div className="rounded-[28px] border border-border bg-card p-4 shadow-glow">
+
+          <div className="rounded-[28px] border border-border bg-card p-4 shadow-glow">
+            <div className="overflow-hidden rounded-2xl">
+              <img
+                src={movies[0]?.posterUrl ?? 'https://placehold.co/800x1200/191D27/F5F6FA?text=Trending'}
+                alt={movies[0]?.title ?? 'Featured movie'}
+                className="h-[420px] w-full object-cover"
+              />
+            </div>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted">Trending</p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">{movies[0]?.title ?? 'Live TMDB feed'}</h2>
+              </div>
+              <Link href="/search" className="rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20">
+                View all
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-shell pb-8">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary">Live feed</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Latest movies</h2>
+          </div>
+          <Link href="/search" className="text-sm text-primary hover:underline">Search more</Link>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {movies.map((movie) => (
+            <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block overflow-hidden rounded-[24px] border border-border bg-card p-3 transition hover:-translate-y-1 hover:border-primary/60">
               <div className="overflow-hidden rounded-2xl">
-                <img
-                  src={featuredMovies[0]?.posterUrl}
-                  alt={featuredMovies[0]?.title ?? 'Featured title'}
-                  className="h-[420px] w-full object-cover"
-                />
+                <img src={movie.posterUrl} alt={movie.title} className="h-[300px] w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
               </div>
-              <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="mt-4 flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-muted">Featured</p>
-                  <h2 className="mt-2 text-2xl font-semibold text-white">{featuredMovies[0]?.title}</h2>
+                  <p className="text-lg font-semibold text-white">{movie.title}</p>
+                  <p className="mt-2 text-sm text-muted">{movie.releaseYear} • {movie.runtimeLabel ?? 'Runtime unavailable'}</p>
                 </div>
-                <Link href={`/movies/${featuredMovies[0]?.slug}`} className="rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20">
-                  View
-                </Link>
+                <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">{movie.rating}</span>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-shell pb-8">
-        <SectionHeading eyebrow="Featured picks" title="Popular movies" description="Curated by mood, genre, and binge value." />
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {featuredMovies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      </section>
-
-      <section className="container-shell pb-8">
-        <SectionHeading eyebrow="Trending" title="Latest additions" description="Fresh picks for discovery and repeat browsing." />
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {popularMovies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      </section>
-
-      <section className="container-shell pb-8">
-        <SectionHeading eyebrow="Binge-ready" title="Featured series" description="Dive into longer-form storytelling and cinematic worlds." />
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {allSeries.map((series) => (
-            <SeriesCard key={series.id} series={series} />
-          ))}
-        </div>
-      </section>
-
-      <section className="container-shell pb-8">
-        <SectionHeading eyebrow="Browse by genre" title="Explore by mood" description="Find your match by style and atmosphere." />
-        <div className="mt-8 flex flex-wrap gap-3">
-          {genres.map((genre) => (
-            <GenrePill key={genre.slug} genre={genre} />
+              <p className="mt-3 line-clamp-3 text-sm text-muted">{movie.overview}</p>
+            </Link>
           ))}
         </div>
       </section>
 
       <section className="container-shell pb-16">
-        <SectionHeading eyebrow="Recommended" title="Movie watchlist" description="Useful picks for users who want to discover more with a clear call to action." />
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {featuredMovies.slice(0, 3).map((movie) => (
-            <div key={movie.id} className="card-surface p-5">
-              <p className="text-xs uppercase tracking-[0.16em] text-primary">Recommended</p>
-              <h3 className="mt-3 text-2xl font-semibold text-white">{movie.title}</h3>
-              <p className="mt-3 text-sm text-muted">{movie.synopsis}</p>
-              <Link href={`/movies/${movie.slug}`} className="mt-5 inline-flex rounded-full border border-border px-4 py-2 text-sm font-medium text-white hover:border-primary/60">
-                See details
-              </Link>
-            </div>
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary">Live feed</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Latest series</h2>
+          </div>
+          <Link href="/search" className="text-sm text-primary hover:underline">Search more</Link>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {series.map((item) => (
+            <Link key={item.id} href={`/series/${item.slug}`} className="group block overflow-hidden rounded-[24px] border border-border bg-card p-3 transition hover:-translate-y-1 hover:border-primary/60">
+              <div className="overflow-hidden rounded-2xl">
+                <img src={item.posterUrl} alt={item.title} className="h-[300px] w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+              </div>
+              <div className="mt-4 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-lg font-semibold text-white">{item.title}</p>
+                  <p className="mt-2 text-sm text-muted">{item.releaseYear} • {item.seasons ?? 1} seasons</p>
+                </div>
+                <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">{item.rating}</span>
+              </div>
+              <p className="mt-3 line-clamp-3 text-sm text-muted">{item.overview}</p>
+            </Link>
           ))}
         </div>
       </section>
