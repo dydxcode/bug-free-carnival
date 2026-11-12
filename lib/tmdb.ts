@@ -30,7 +30,10 @@ type TmdbResult = {
   genres?: Array<{ id: number; name: string }>;
   number_of_seasons?: number;
   runtime?: number;
+  episode_run_time?: number[];
 };
+
+type TmdbListResponse = { results?: TmdbResult[] };
 
 function slugify(value: string) {
   return value
@@ -57,9 +60,9 @@ function formatRuntime(runtime?: number) {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
-function buildSlug(title: string, year?: number) {
-  const base = slugify(title) || `title-${Date.now()}`;
-  return year ? `${base}-${year}` : base;
+function buildSlug(title: string, year: number | undefined, id: number) {
+  const base = slugify(title) || `title-${id}`;
+  return `${base}${year ? `-${year}` : ''}-${id}`;
 }
 
 function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
@@ -71,9 +74,7 @@ function mapGenres(items?: Array<{ id: number; name: string }> | number[]) {
 }
 
 async function tmdbFetch<T>(path: string, params: Record<string, string | number | boolean> = {}) {
-  if (!token) {
-    throw new Error('TMDB_ACCESS_TOKEN is not configured.');
-  }
+  if (!token) throw new Error('TMDB_ACCESS_TOKEN is not configured.');
 
   const url = new URL(`https://api.themoviedb.org/3${path}`);
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
@@ -100,7 +101,7 @@ function mapMovie(item: TmdbResult): TmdbCatalogItem | null {
     id: item.id,
     type: 'movie',
     title,
-    slug: buildSlug(title, year),
+    slug: buildSlug(title, year, item.id),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
@@ -121,13 +122,14 @@ function mapSeries(item: TmdbResult): TmdbCatalogItem | null {
     id: item.id,
     type: 'series',
     title,
-    slug: buildSlug(title, year),
+    slug: buildSlug(title, year, item.id),
     overview,
     posterUrl: imageUrl(item.poster_path),
     releaseYear: year,
     rating: item.vote_average ? `TMDB ${item.vote_average.toFixed(1)}/10` : 'Not rated',
     genres: mapGenres(item.genres ?? item.genre_ids),
     seasons: item.number_of_seasons ?? 1,
+    runtimeLabel: formatRuntime(item.episode_run_time?.[0]),
   };
 }
 
@@ -138,20 +140,26 @@ export function hasTmdbToken() {
 export async function getTmdbTrending(limit = 8) {
   if (!token) return { movies: [], series: [] };
 
-  const [movieResponse, seriesResponse] = await Promise.all([
-    tmdbFetch<{ results?: TmdbResult[] }>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
-    tmdbFetch<{ results?: TmdbResult[] }>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
-  ]);
+  try {
+    const [movieResponse, seriesResponse] = await Promise.all([
+      tmdbFetch<TmdbListResponse>('/movie/now_playing', { language: defaultLanguage, page: 1 }),
+      tmdbFetch<TmdbListResponse>('/tv/on_the_air', { language: defaultLanguage, page: 1 }),
+    ]);
 
-  const movies = (movieResponse.results ?? []).slice(0, limit).map(mapMovie).filter(Boolean) as TmdbCatalogItem[];
-  const series = (seriesResponse.results ?? []).slice(0, limit).map(mapSeries).filter(Boolean) as TmdbCatalogItem[];
-  return { movies, series };
+    return {
+      movies: (movieResponse.results ?? []).map(mapMovie).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
+      series: (seriesResponse.results ?? []).map(mapSeries).filter((item): item is TmdbCatalogItem => item !== null).slice(0, limit),
+    };
+  } catch (error) {
+    console.error('Unable to load TMDB live feeds:', error);
+    return { movies: [], series: [] };
+  }
 }
 
 export async function searchTmdb(query: string, limit = 12) {
   if (!token || !query.trim()) return [] as TmdbCatalogItem[];
 
-  const response = await tmdbFetch<{ results?: TmdbResult[] }>('/search/multi', {
+  const response = await tmdbFetch<TmdbListResponse>('/search/multi', {
     query: query.trim(),
     include_adult: false,
     language: defaultLanguage,
@@ -160,9 +168,9 @@ export async function searchTmdb(query: string, limit = 12) {
 
   return (response.results ?? [])
     .filter((item) => item.media_type === 'movie' || item.media_type === 'tv')
-    .slice(0, limit)
     .map((item) => item.media_type === 'movie' ? mapMovie(item) : mapSeries(item))
-    .filter(Boolean) as TmdbCatalogItem[];
+    .filter((item): item is TmdbCatalogItem => item !== null)
+    .slice(0, limit);
 }
 
 export async function getTmdbMovieById(id: string) {
@@ -175,4 +183,9 @@ export async function getTmdbSeriesById(id: string) {
   if (!/^\d+$/.test(id)) return null;
   const series = await tmdbFetch<TmdbResult>(`/tv/${id}`, { language: defaultLanguage });
   return mapSeries(series);
+}
+
+export function tmdbIdFromSlug(slug: string) {
+  const match = slug.match(/-(\d+)$/);
+  return match?.[1] ?? null;
 }
