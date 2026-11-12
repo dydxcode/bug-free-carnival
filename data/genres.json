@@ -1,56 +1,164 @@
 [
   {
-    "id": "genre-action",
+    "id": "tmdb-genre-28",
     "name": "Action",
     "slug": "action",
     "description": "High-intensity stories with speed, conflict, and momentum."
   },
   {
-    "id": "genre-adventure",
+    "id": "tmdb-genre-12",
     "name": "Adventure",
     "slug": "adventure",
     "description": "Travel, discovery, and wonder-filled journeys."
   },
   {
-    "id": "genre-animation",
+    "id": "tmdb-genre-16",
     "name": "Animation",
     "slug": "animation",
     "description": "Stylized worlds and expressive storytelling."
   },
   {
-    "id": "genre-comedy",
+    "id": "tmdb-genre-35",
     "name": "Comedy",
     "slug": "comedy",
     "description": "Light-hearted energy and character-driven humor."
   },
   {
-    "id": "genre-drama",
+    "id": "tmdb-genre-80",
+    "name": "Crime",
+    "slug": "crime",
+    "description": "Explore Crime movies and series."
+  },
+  {
+    "id": "tmdb-genre-99",
+    "name": "Documentary",
+    "slug": "documentary",
+    "description": "Explore Documentary movies and series."
+  },
+  {
+    "id": "tmdb-genre-18",
     "name": "Drama",
     "slug": "drama",
     "description": "Emotionally rich stories and character arcs."
   },
   {
-    "id": "genre-horror",
+    "id": "tmdb-genre-10751",
+    "name": "Family",
+    "slug": "family",
+    "description": "Explore Family movies and series."
+  },
+  {
+    "id": "tmdb-genre-14",
+    "name": "Fantasy",
+    "slug": "fantasy",
+    "description": "Explore Fantasy movies and series."
+  },
+  {
+    "id": "tmdb-genre-36",
+    "name": "History",
+    "slug": "history",
+    "description": "Explore History movies and series."
+  },
+  {
+    "id": "tmdb-genre-27",
     "name": "Horror",
     "slug": "horror",
     "description": "Tension, dread, and atmospheric pacing."
   },
   {
-    "id": "genre-thriller",
-    "name": "Thriller",
-    "slug": "thriller",
-    "description": "Suspense, mystery, and pressure-filled stakes."
+    "id": "tmdb-genre-10402",
+    "name": "Music",
+    "slug": "music",
+    "description": "Explore Music movies and series."
   },
   {
-    "id": "genre-romance",
+    "id": "tmdb-genre-9648",
+    "name": "Mystery",
+    "slug": "mystery",
+    "description": "Explore Mystery movies and series."
+  },
+  {
+    "id": "tmdb-genre-10749",
     "name": "Romance",
     "slug": "romance",
     "description": "Emotional connection and relationship-driven stories."
   },
   {
-    "id": "genre-science-fiction",
+    "id": "tmdb-genre-878",
     "name": "Science Fiction",
     "slug": "science-fiction",
     "description": "Future worlds, ideas, and speculative worlds."
+  },
+  {
+    "id": "tmdb-genre-10770",
+    "name": "TV Movie",
+    "slug": "tv-movie",
+    "description": "Explore TV Movie movies and series."
+  },
+  {
+    "id": "tmdb-genre-53",
+    "name": "Thriller",
+    "slug": "thriller",
+    "description": "Suspense, mystery, and pressure-filled stakes."
+  },
+  {
+    "id": "tmdb-genre-10752",
+    "name": "War",
+    "slug": "war",
+    "description": "Explore War movies and series."
+  },
+  {
+    "id": "tmdb-genre-37",
+    "name": "Western",
+    "slug": "western",
+    "description": "Explore Western movies and series."
+  },
+  {
+    "id": "tmdb-genre-10759",
+    "name": "Action & Adventure",
+    "slug": "action-adventure",
+    "description": "Explore Action & Adventure movies and series."
+  },
+  {
+    "id": "tmdb-genre-10762",
+    "name": "Kids",
+    "slug": "kids",
+    "description": "Explore Kids movies and series."
+  },
+  {
+    "id": "tmdb-genre-10763",
+    "name": "News",
+    "slug": "news",
+    "description": "Explore News movies and series."
+  },
+  {
+    "id": "tmdb-genre-10764",
+    "name": "Reality",
+    "slug": "reality",
+    "description": "Explore Reality movies and series."
+  },
+  {
+    "id": "tmdb-genre-10765",
+    "name": "Sci-Fi & Fantasy",
+    "slug": "sci-fi-fantasy",
+    "description": "Explore Sci-Fi & Fantasy movies and series."
+  },
+  {
+    "id": "tmdb-genre-10766",
+    "name": "Soap",
+    "slug": "soap",
+    "description": "Explore Soap movies and series."
+  },
+  {
+    "id": "tmdb-genre-10767",
+    "name": "Talk",
+    "slug": "talk",
+    "description": "Explore Talk movies and series."
+  },
+  {
+    "id": "tmdb-genre-10768",
+    "name": "War & Politics",
+    "slug": "war-politics",
+    "description": "Explore War & Politics movies and series."
   }
 ]

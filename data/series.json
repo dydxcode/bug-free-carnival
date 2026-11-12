@@ -1,70 +1,545 @@
 [
   {
-    "id": "series-ember-circuit",
-    "title": "Ember Circuit",
-    "slug": "ember-circuit",
-    "synopsis": "Across a crashed city network, a team of unlikely operators rebuilds a lost communications system while facing a power shortage and global whispers of sabotage.",
-    "posterUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=900&q=80",
-    "releaseYear": 2024,
-    "genres": ["science-fiction", "thriller"],
-    "cast": ["lyra-cross", "milo-hart", "zoe-miles"],
-    "seasons": 2,
-    "seoTitle": "Ember Circuit series overview and detail page",
-    "seoDescription": "Read the Ember Circuit synopsis, seasons, and genre details on this demo series catalog page.",
+    "id": "tmdb-series-1877",
+    "tmdbId": 1877,
+    "title": "Phineas and Ferb",
+    "slug": "phineas-and-ferb-2007",
+    "synopsis": "Each day, two kindhearted suburban stepbrothers on summer vacation embark on some grand new project, which annoys their controlling sister, Candace, who tries to bust them. Meanwhile, their pet platypus plots against evil Dr. Doofenshmirtz.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/g6TidT7be954rrzPPBTIXkSmfXj.jpg",
+    "releaseYear": 2007,
+    "genres": [
+      "animation",
+      "comedy",
+      "family",
+      "sci-fi-fantasy"
+    ],
+    "cast": [
+      "person-188024",
+      "person-67600",
+      "person-58965",
+      "person-1661268",
+      "person-1214403",
+      "person-197285",
+      "person-104644",
+      "person-567615"
+    ],
+    "seasons": 6,
+    "seoTitle": "Phineas and Ferb (2007) — series details",
+    "seoDescription": "Each day, two kindhearted suburban stepbrothers on summer vacation embark on some grand new project, which annoys their controlling sister, Candace, who tr",
     "status": "published",
-    "rating": "TV-14",
-    "watchUrl": "https://example.com/watch/ember-circuit",
-    "featured": true
-  },
-  {
-    "id": "series-quiet-planet",
-    "title": "Quiet Planet",
-    "slug": "quiet-planet",
-    "synopsis": "A scientific expedition discovers a world that echoes Earth in unsettling ways, forcing the crew to confront their own ethics and assumptions.",
-    "posterUrl": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=900&q=80",
-    "releaseYear": 2023,
-    "genres": ["adventure", "science-fiction"],
-    "cast": ["rhett-sloan", "ava-novak"],
-    "seasons": 3,
-    "seoTitle": "Quiet Planet series synopsis and watch destination",
-    "seoDescription": "Explore the Quiet Planet story, seasons, and discovery information in this sample series landing page.",
-    "status": "draft",
-    "rating": "TV-PG",
-    "watchUrl": "https://example.com/watch/quiet-planet",
-    "featured": true
-  },
-  {
-    "id": "series-halo-summer",
-    "title": "Halo Summer",
-    "slug": "halo-summer",
-    "synopsis": "Three siblings return to their beach town for one last summer and discover an old radio frequency that reveals a hidden timeline beneath the shoreline.",
-    "posterUrl": "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80",
-    "releaseYear": 2022,
-    "genres": ["drama", "adventure"],
-    "cast": ["ava-novak", "sierra-vale"],
-    "seasons": 1,
-    "seoTitle": "Halo Summer series details and preview context",
-    "seoDescription": "Read the Halo Summer overview, seasons, and storyline details on the series discovery page.",
-    "status": "published",
-    "rating": "TV-G",
-    "watchUrl": "https://example.com/watch/halo-summer",
+    "rating": "TMDB 7.9/10",
     "featured": false
   },
   {
-    "id": "series-velvet-signal",
-    "title": "Velvet Signal",
-    "slug": "velvet-signal",
-    "synopsis": "A radio host and a police archivist piece together a decades-old conspiracy while a citywide broadcast begins to reveal the past in real time.",
-    "posterUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80",
+    "id": "tmdb-series-57243",
+    "tmdbId": 57243,
+    "title": "Doctor Who",
+    "slug": "doctor-who-2005",
+    "synopsis": "The Doctor is a Time Lord: a 900 year old alien with 2 hearts, part of a gifted civilization who mastered time travel. The Doctor saves planets for a living—more of a hobby actually, and the Doctor's very, very good at it.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/lHfmc6d8pOVFrD0eOKPiDbjeucG.jpg",
+    "releaseYear": 2005,
+    "genres": [
+      "action-adventure",
+      "drama",
+      "sci-fi-fantasy"
+    ],
+    "cast": [
+      "person-66431",
+      "person-1752554",
+      "person-216049"
+    ],
+    "seasons": 13,
+    "seoTitle": "Doctor Who (2005) — series details",
+    "seoDescription": "The Doctor is a Time Lord: a 900 year old alien with 2 hearts, part of a gifted civilization who mastered time travel. The Doctor saves planets for a livin",
+    "status": "published",
+    "rating": "TMDB 7.6/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-2734",
+    "tmdbId": 2734,
+    "title": "Law & Order: Special Victims Unit",
+    "slug": "law-order-special-victims-unit-1999",
+    "synopsis": "In the criminal justice system, sexually-based offenses are considered especially heinous. In New York City, the dedicated detectives who investigate these vicious felonies are members of an elite squad known as the Special Victims Unit. These are their stories.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/pHNhUwSXuDQ9jPZOCb8SgJaQZsc.jpg",
+    "releaseYear": 1999,
+    "genres": [
+      "crime",
+      "drama",
+      "mystery"
+    ],
+    "cast": [
+      "person-6240",
+      "person-21411",
+      "person-206637",
+      "person-1217599",
+      "person-2005718",
+      "person-1413757",
+      "person-1380500"
+    ],
+    "seasons": 28,
+    "seoTitle": "Law & Order: Special Victims Unit (1999) — series details",
+    "seoDescription": "In the criminal justice system, sexually-based offenses are considered especially heinous. In New York City, the dedicated detectives who investigate these",
+    "status": "published",
+    "rating": "TMDB 8.0/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-5920",
+    "tmdbId": 5920,
+    "title": "The Mentalist",
+    "slug": "the-mentalist-2008",
+    "synopsis": "Patrick Jane, a former celebrity psychic medium, uses his razor sharp skills of observation and expertise at \"reading\" people to solve serious crimes with the California Bureau of Investigation.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/acYXu4KaDj1NIkMgObnhe4C4a0T.jpg",
+    "releaseYear": 2008,
+    "genres": [
+      "crime",
+      "drama",
+      "mystery"
+    ],
+    "cast": [
+      "person-1284159",
+      "person-17346",
+      "person-52947",
+      "person-17345",
+      "person-970561",
+      "person-146516"
+    ],
+    "seasons": 7,
+    "seoTitle": "The Mentalist (2008) — series details",
+    "seoDescription": "Patrick Jane, a former celebrity psychic medium, uses his razor sharp skills of observation and expertise at \"reading\" people to solve serious crimes with ",
+    "status": "published",
+    "rating": "TMDB 8.4/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-456",
+    "tmdbId": 456,
+    "title": "The Simpsons",
+    "slug": "the-simpsons-1989",
+    "synopsis": "Set in Springfield, the average American town, the show focuses on the antics and everyday adventures of the Simpson family; Homer, Marge, Bart, Lisa and Maggie, as well as a virtual cast of thousands. Since the beginning, the series has been a pop culture icon, attracting hundreds of celebrities to guest star. The show has also made name for itself in its fearless satirical take on politics, media and American life in general.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/tf0CUEynk6GfmrlHIQKQ5mfFP5P.jpg",
+    "releaseYear": 1989,
+    "genres": [
+      "animation",
+      "comedy"
+    ],
+    "cast": [
+      "person-198",
+      "person-199",
+      "person-200",
+      "person-5586",
+      "person-5587",
+      "person-6008"
+    ],
+    "seasons": 38,
+    "seoTitle": "The Simpsons (1989) — series details",
+    "seoDescription": "Set in Springfield, the average American town, the show focuses on the antics and everyday adventures of the Simpson family; Homer, Marge, Bart, Lisa and M",
+    "status": "published",
+    "rating": "TMDB 8.0/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1421",
+    "tmdbId": 1421,
+    "title": "Modern Family",
+    "slug": "modern-family-2009",
+    "synopsis": "The Pritchett-Dunphy-Tucker clan is a wonderfully large and blended family. They give us an honest and often hilarious look into the sometimes warm, sometimes twisted, embrace of the modern family.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/k5Qg5rgPoKdh3yTJJrLtyoyYGwC.jpg",
+    "releaseYear": 2009,
+    "genres": [
+      "comedy"
+    ],
+    "cast": [
+      "person-18977",
+      "person-63522",
+      "person-31171",
+      "person-15232",
+      "person-204815",
+      "person-156962",
+      "person-91351",
+      "person-42160"
+    ],
+    "seasons": 11,
+    "seoTitle": "Modern Family (2009) — series details",
+    "seoDescription": "The Pritchett-Dunphy-Tucker clan is a wonderfully large and blended family. They give us an honest and often hilarious look into the sometimes warm, someti",
+    "status": "published",
+    "rating": "TMDB 7.9/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1100",
+    "tmdbId": 1100,
+    "title": "How I Met Your Mother",
+    "slug": "how-i-met-your-mother-2005",
+    "synopsis": "A father recounts to his children - through a series of flashbacks - the journey he and his four best friends took leading up to him meeting their mother.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/b34jPzmB0wZy7EjUZoleXOl2RRI.jpg",
+    "releaseYear": 2005,
+    "genres": [
+      "comedy"
+    ],
+    "cast": [
+      "person-144009",
+      "person-41686",
+      "person-41088",
+      "person-21595",
+      "person-71189",
+      "person-204392"
+    ],
+    "seasons": 9,
+    "seoTitle": "How I Met Your Mother (2005) — series details",
+    "seoDescription": "A father recounts to his children - through a series of flashbacks - the journey he and his four best friends took leading up to him meeting their mother.",
+    "status": "published",
+    "rating": "TMDB 8.1/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-253376",
+    "tmdbId": 253376,
+    "title": "The Girlfriend",
+    "slug": "the-girlfriend-2025",
+    "synopsis": "Laura has it all: a glittering career, a loving husband, and her precious son, Daniel. But her perfect life unravels when Daniel brings home Cherry, a girlfriend who changes everything. After a tense introduction, Laura becomes convinced Cherry is hiding something. Is she a manipulative social climber, or is Laura just paranoid? The truth is a matter of perspective.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/ktrp3tdZ5IQpFux4nLy8z70bt3n.jpg",
     "releaseYear": 2025,
-    "genres": ["thriller", "drama"],
-    "cast": ["zoe-miles", "chris-tate"],
-    "seasons": 2,
-    "seoTitle": "Velvet Signal series detail and story overview",
-    "seoDescription": "View the Velvet Signal story setup, cast roster, and genre link on the series catalog page.",
-    "status": "draft",
-    "rating": "TV-14",
-    "watchUrl": "https://example.com/watch/velvet-signal",
+    "genres": [
+      "drama",
+      "mystery"
+    ],
+    "cast": [
+      "person-32",
+      "person-1173984",
+      "person-1800302",
+      "person-94431",
+      "person-1198661",
+      "person-31427",
+      "person-1687354"
+    ],
+    "seasons": 1,
+    "seoTitle": "The Girlfriend (2025) — series details",
+    "seoDescription": "Laura has it all: a glittering career, a loving husband, and her precious son, Daniel. But her perfect life unravels when Daniel brings home Cherry, a girl",
+    "status": "published",
+    "rating": "TMDB 7.1/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1400",
+    "tmdbId": 1400,
+    "title": "Seinfeld",
+    "slug": "seinfeld-1989",
+    "synopsis": "A stand-up comedian and his three offbeat friends weather the pitfalls and payoffs of life in New York City in the '90s. It's a show about nothing.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/aCw8ONfyz3AhngVQa1E2Ss4KSUQ.jpg",
+    "releaseYear": 1989,
+    "genres": [
+      "comedy"
+    ],
+    "cast": [
+      "person-16377",
+      "person-1206",
+      "person-50807",
+      "person-15886"
+    ],
+    "seasons": 9,
+    "seoTitle": "Seinfeld (1989) — series details",
+    "seoDescription": "A stand-up comedian and his three offbeat friends weather the pitfalls and payoffs of life in New York City in the '90s. It's a show about nothing.",
+    "status": "published",
+    "rating": "TMDB 8.2/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-2316",
+    "tmdbId": 2316,
+    "title": "The Office",
+    "slug": "the-office-2005",
+    "synopsis": "The everyday lives of office employees in the Scranton, Pennsylvania branch of the fictional Dunder Mifflin Paper Company.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/7DJKHzAi83BmQrWLrYYOqcoKfhR.jpg",
+    "releaseYear": 2005,
+    "genres": [
+      "comedy"
+    ],
+    "cast": [
+      "person-11678",
+      "person-17697",
+      "person-51856",
+      "person-27105"
+    ],
+    "seasons": 9,
+    "seoTitle": "The Office (2005) — series details",
+    "seoDescription": "The everyday lives of office employees in the Scranton, Pennsylvania branch of the fictional Dunder Mifflin Paper Company.",
+    "status": "published",
+    "rating": "TMDB 8.6/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1408",
+    "tmdbId": 1408,
+    "title": "House",
+    "slug": "house-2004",
+    "synopsis": "Dr. Gregory House, a drug-addicted, unconventional, misanthropic medical genius, leads a team of diagnosticians at the fictional Princeton–Plainsboro Teaching Hospital in New Jersey.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/3Cz7ySOQJmqiuTdrc6CY0r65yDI.jpg",
+    "releaseYear": 2004,
+    "genres": [
+      "drama"
+    ],
+    "cast": [
+      "person-41419",
+      "person-2692",
+      "person-4987",
+      "person-41422",
+      "person-51992",
+      "person-31514",
+      "person-93285"
+    ],
+    "seasons": 8,
+    "seoTitle": "House (2004) — series details",
+    "seoDescription": "Dr. Gregory House, a drug-addicted, unconventional, misanthropic medical genius, leads a team of diagnosticians at the fictional Princeton–Plainsboro Teach",
+    "status": "published",
+    "rating": "TMDB 8.6/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-63333",
+    "tmdbId": 63333,
+    "title": "The Last Kingdom",
+    "slug": "the-last-kingdom-2015",
+    "synopsis": "A show of heroic deeds and epic battles with a thematic depth that embraces politics, religion, warfare, courage, love, loyalty and our universal search for identity. Combining real historical figures and events with fictional characters, it is the story of how a people combined their strength under one of the most iconic kings of history in order to reclaim their land for themselves and build a place they call home.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/8eJf0hxgIhE6QSxbtuNCekTddy1.jpg",
+    "releaseYear": 2015,
+    "genres": [
+      "action-adventure",
+      "drama",
+      "war-politics"
+    ],
+    "cast": [
+      "person-1273309",
+      "person-1574968",
+      "person-1799858",
+      "person-3451119",
+      "person-1362119",
+      "person-1156305",
+      "person-1756015",
+      "person-1742597"
+    ],
+    "seasons": 5,
+    "seoTitle": "The Last Kingdom (2015) — series details",
+    "seoDescription": "A show of heroic deeds and epic battles with a thematic depth that embraces politics, religion, warfare, courage, love, loyalty and our universal search fo",
+    "status": "published",
+    "rating": "TMDB 8.3/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-60735",
+    "tmdbId": 60735,
+    "title": "The Flash",
+    "slug": "the-flash-2014",
+    "synopsis": "After being struck by lightning, CSI investigator Barry Allen awakens from a nine-month coma to discover he has been  granted the gift of super speed.  Teaming up with S.T.A.R. Labs, Barry takes on the persona of The Flash, the Fastest  Man Alive, to protect his city.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/yZevl2vHQgmosfwUdVNzviIfaWS.jpg",
+    "releaseYear": 2014,
+    "genres": [
+      "drama",
+      "sci-fi-fantasy"
+    ],
+    "cast": [
+      "person-122616",
+      "person-212700",
+      "person-31838",
+      "person-101060",
+      "person-1163405",
+      "person-1887800",
+      "person-228330"
+    ],
+    "seasons": 9,
+    "seoTitle": "The Flash (2014) — series details",
+    "seoDescription": "After being struck by lightning, CSI investigator Barry Allen awakens from a nine-month coma to discover he has been  granted the gift of super speed.  Tea",
+    "status": "published",
+    "rating": "TMDB 7.7/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-18165",
+    "tmdbId": 18165,
+    "title": "The Vampire Diaries",
+    "slug": "the-vampire-diaries-2009",
+    "synopsis": "The story of two vampire brothers obsessed with the same girl, who bears a striking resemblance to the beautiful but ruthless vampire they knew and loved in 1864.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/aBkVgChtyyJaHyZh1gfd8DbzQon.jpg",
+    "releaseYear": 2009,
+    "genres": [
+      "drama",
+      "sci-fi-fantasy"
+    ],
+    "cast": [
+      "person-83141",
+      "person-19211",
+      "person-159962",
+      "person-85144",
+      "person-221841",
+      "person-1465190",
+      "person-56045"
+    ],
+    "seasons": 8,
+    "seoTitle": "The Vampire Diaries (2009) — series details",
+    "seoDescription": "The story of two vampire brothers obsessed with the same girl, who bears a striking resemblance to the beautiful but ruthless vampire they knew and loved i",
+    "status": "published",
+    "rating": "TMDB 8.3/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1427",
+    "tmdbId": 1427,
+    "title": "Broadchurch",
+    "slug": "broadchurch-2013",
+    "synopsis": "The murder of a young boy in a small coastal town brings a media frenzy, which threatens to tear the community apart.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/2NhBFUTg5KVBmGwafxtLwVdsqrr.jpg",
+    "releaseYear": 2013,
+    "genres": [
+      "crime",
+      "drama",
+      "mystery"
+    ],
+    "cast": [
+      "person-20049",
+      "person-39187",
+      "person-543629",
+      "person-124686",
+      "person-53519",
+      "person-229634",
+      "person-1335315",
+      "person-17693"
+    ],
+    "seasons": 3,
+    "seoTitle": "Broadchurch (2013) — series details",
+    "seoDescription": "The murder of a young boy in a small coastal town brings a media frenzy, which threatens to tear the community apart.",
+    "status": "published",
+    "rating": "TMDB 7.9/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-48866",
+    "tmdbId": 48866,
+    "title": "The 100",
+    "slug": "the-100-2014",
+    "synopsis": "100 years in the future, when the Earth has been abandoned due to radioactivity, the last surviving humans live on an ark orbiting the planet — but the ark won't last forever. So the repressive regime picks 100 expendable juvenile delinquents to send down to Earth to see if the planet is still habitable.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/wHIMMLFsk32wIzDmawWkYVbxFCS.jpg",
+    "releaseYear": 2014,
+    "genres": [
+      "sci-fi-fantasy",
+      "action-adventure",
+      "drama",
+      "crime"
+    ],
+    "cast": [
+      "person-1213278",
+      "person-127733",
+      "person-1148626",
+      "person-140114",
+      "person-144852",
+      "person-1390882",
+      "person-62911",
+      "person-979807"
+    ],
+    "seasons": 7,
+    "seoTitle": "The 100 (2014) — series details",
+    "seoDescription": "100 years in the future, when the Earth has been abandoned due to radioactivity, the last surviving humans live on an ark orbiting the planet — but the ark",
+    "status": "published",
+    "rating": "TMDB 7.9/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-82873",
+    "tmdbId": 82873,
+    "title": "The Kelly Clarkson Show",
+    "slug": "the-kelly-clarkson-show-2019",
+    "synopsis": "Kelly Clarkson presents the biggest newsmakers and names in film, television and music; as well as emerging new talent and everyday people who are beacons of hope in their communities.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/sBix25bie9UQFzbarN51DpFO5ky.jpg",
+    "releaseYear": 2019,
+    "genres": [
+      "talk"
+    ],
+    "cast": [
+      "person-155488"
+    ],
+    "seasons": 7,
+    "seoTitle": "The Kelly Clarkson Show (2019) — series details",
+    "seoDescription": "Kelly Clarkson presents the biggest newsmakers and names in film, television and music; as well as emerging new talent and everyday people who are beacons ",
+    "status": "published",
+    "rating": "TMDB 6.2/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-873",
+    "tmdbId": 873,
+    "title": "Columbo",
+    "slug": "columbo-1971",
+    "synopsis": "Columbo is a friendly, verbose, disheveled-looking police detective who is consistently underestimated by his suspects. Despite his unprepossessing appearance and apparent absentmindedness, he shrewdly solves all of his cases and secures all evidence needed for indictment. His formidable eye for detail and meticulously dedicated approach often become clear to the killer only late in the storyline.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/2JCD8vab3fircOU8cM2HJCxfv4I.jpg",
+    "releaseYear": 1971,
+    "genres": [
+      "crime",
+      "drama",
+      "mystery"
+    ],
+    "cast": [
+      "person-2314"
+    ],
+    "seasons": 10,
+    "seoTitle": "Columbo (1971) — series details",
+    "seoDescription": "Columbo is a friendly, verbose, disheveled-looking police detective who is consistently underestimated by his suspects. Despite his unprepossessing appeara",
+    "status": "published",
+    "rating": "TMDB 8.1/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-3002",
+    "tmdbId": 3002,
+    "title": "The Benny Hill Show",
+    "slug": "the-benny-hill-show-1969",
+    "synopsis": "The Benny Hill Show is a British comedy television show that starred Benny Hill and aired in various incarnations between 15 January 1955 and 30 May 1991 in over 140 countries. The show focused on sketches that were full of slapstick, mime, parody, and double-entendre. Thames Television cancelled production of the show in 1989 due to declining ratings and large production costs at £450,000 per show.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/y3mGj6YAy7CRWMq06gjsXf3rIJ1.jpg",
+    "releaseYear": 1969,
+    "genres": [
+      "comedy"
+    ],
+    "cast": [
+      "person-55879",
+      "person-115706",
+      "person-112469",
+      "person-47394",
+      "person-1233195",
+      "person-5052",
+      "person-1230503",
+      "person-12658"
+    ],
+    "seasons": 19,
+    "seoTitle": "The Benny Hill Show (1969) — series details",
+    "seoDescription": "The Benny Hill Show is a British comedy television show that starred Benny Hill and aired in various incarnations between 15 January 1955 and 30 May 1991 i",
+    "status": "published",
+    "rating": "TMDB 7.2/10",
+    "featured": false
+  },
+  {
+    "id": "tmdb-series-1695",
+    "tmdbId": 1695,
+    "title": "Monk",
+    "slug": "monk-2002",
+    "synopsis": "Adrian Monk was once a rising star with the San Francisco Police Department, legendary for using unconventional means to solve the department's most baffling cases. But after the tragic (and still unsolved) murder of his wife Trudy, he developed an extreme case of obsessive-compulsive disorder. Now working as a private consultant, Monk continues to investigate cases in the most unconventional ways.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/3axGMbUecXXOPSeG47v2i9wK5y5.jpg",
+    "releaseYear": 2002,
+    "genres": [
+      "drama",
+      "comedy",
+      "crime",
+      "mystery"
+    ],
+    "cast": [
+      "person-4252",
+      "person-15854",
+      "person-6166",
+      "person-54826"
+    ],
+    "seasons": 8,
+    "seoTitle": "Monk (2002) — series details",
+    "seoDescription": "Adrian Monk was once a rising star with the San Francisco Police Department, legendary for using unconventional means to solve the department's most baffli",
+    "status": "published",
+    "rating": "TMDB 7.9/10",
     "featured": false
   }
 ]
